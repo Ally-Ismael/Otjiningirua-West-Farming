@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Products</h1>
+<p><a href="/admin/products/new">New Product</a></p>
+<ul>
+  {% for p in products %}
+  <li>
+    <strong>{{ p.name }}</strong> — {{ p.category }}
+    <form action="/admin/products/{{ p.id }}/upload" method="post" enctype="multipart/form-data" style="margin-top:.5rem;">
+      <input type="file" name="file" required />
+      <select name="media_type">
+        <option value="video">Video</option>
+        <option value="image">Image</option>
+      </select>
+      <button type="submit">Upload</button>
+    </form>
+  </li>
+  {% else %}
+  <li>No products yet.</li>
+  {% endfor %}
+  </ul>
+{% endblock %}
+
