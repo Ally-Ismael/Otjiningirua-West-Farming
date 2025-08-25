@@ -24,6 +24,18 @@ const writeJson = (file, data) => {
 	fs.writeFileSync(path.join(DATA_DIR, file), JSON.stringify(data, null, 2));
 };
 
+const readJsonObject = (file) => {
+	try {
+		return JSON.parse(fs.readFileSync(path.join(DATA_DIR, file), 'utf8'));
+	} catch (e) {
+		return {};
+	}
+};
+
+const writeJsonObject = (file, data) => {
+	fs.writeFileSync(path.join(DATA_DIR, file), JSON.stringify(data, null, 2));
+};
+
 const sendJson = (res, status, obj) => {
 	res.writeHead(status, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
 	res.end(JSON.stringify(obj));
@@ -116,10 +128,32 @@ const routes = async (req, res) => {
 			const ram = { id: Date.now().toString(), createdAt: new Date().toISOString(), media: [], ...body };
 			rams.push(ram);
 			writeJson('rams.json', rams);
+			logActivity('create', 'ram', ram.id, ram);
 			return sendJson(res, 201, ram);
 		} catch (e) {
 			return sendJson(res, 400, { ok: false, error: e.message });
 		}
+	}
+	if (req.url.startsWith('/api/admin/rams/') && req.method === 'PUT') {
+		try {
+			const id = req.url.split('/').pop();
+			const body = await parseBody(req);
+			const rams = readJson('rams.json');
+			const idx = rams.findIndex(r => r.id === id);
+			if (idx < 0) return sendJson(res, 404, { ok: false, error: 'Not found' });
+			rams[idx] = { ...rams[idx], ...body };
+			writeJson('rams.json', rams);
+			logActivity('update', 'ram', id, body);
+			return sendJson(res, 200, rams[idx]);
+		} catch (e) { return sendJson(res, 400, { ok: false, error: e.message }); }
+	}
+	if (req.url.startsWith('/api/admin/rams/') && req.method === 'DELETE') {
+		const id = req.url.split('/').pop();
+		const rams = readJson('rams.json');
+		const next = rams.filter(r => r.id !== id);
+		writeJson('rams.json', next);
+		logActivity('delete', 'ram', id, {});
+		return sendJson(res, 200, { ok: true });
 	}
 	if (req.url === '/api/admin/beans' && req.method === 'POST') {
 		try {
@@ -128,10 +162,32 @@ const routes = async (req, res) => {
 			const bean = { id: Date.now().toString(), createdAt: new Date().toISOString(), media: [], ...body };
 			beans.push(bean);
 			writeJson('beans.json', beans);
+			logActivity('create', 'bean', bean.id, bean);
 			return sendJson(res, 201, bean);
 		} catch (e) {
 			return sendJson(res, 400, { ok: false, error: e.message });
 		}
+	}
+	if (req.url.startsWith('/api/admin/beans/') && req.method === 'PUT') {
+		try {
+			const id = req.url.split('/').pop();
+			const body = await parseBody(req);
+			const beans = readJson('beans.json');
+			const idx = beans.findIndex(b => b.id === id);
+			if (idx < 0) return sendJson(res, 404, { ok: false, error: 'Not found' });
+			beans[idx] = { ...beans[idx], ...body };
+			writeJson('beans.json', beans);
+			logActivity('update', 'bean', id, body);
+			return sendJson(res, 200, beans[idx]);
+		} catch (e) { return sendJson(res, 400, { ok: false, error: e.message }); }
+	}
+	if (req.url.startsWith('/api/admin/beans/') && req.method === 'DELETE') {
+		const id = req.url.split('/').pop();
+		const beans = readJson('beans.json');
+		const next = beans.filter(b => b.id !== id);
+		writeJson('beans.json', next);
+		logActivity('delete', 'bean', id, {});
+		return sendJson(res, 200, { ok: true });
 	}
 	if (req.url.startsWith('/api/admin/upload') && req.method === 'POST') {
 		try {
@@ -152,6 +208,7 @@ const routes = async (req, res) => {
 					rams[idx].media = rams[idx].media || [];
 					rams[idx].media.push({ type: 'video', url: publicUrl, filename: safeName });
 					writeJson('rams.json', rams);
+					logActivity('upload', 'ram_media', parentId, { url: publicUrl, filename: safeName });
 				}
 			}
 			if (parentType === 'bean') {
@@ -161,12 +218,156 @@ const routes = async (req, res) => {
 					beans[idx].media = beans[idx].media || [];
 					beans[idx].media.push({ type: 'video', url: publicUrl, filename: safeName });
 					writeJson('beans.json', beans);
+					logActivity('upload', 'bean_media', parentId, { url: publicUrl, filename: safeName });
 				}
 			}
 			return sendJson(res, 201, { ok: true, url: publicUrl });
 		} catch (e) {
 			return sendJson(res, 400, { ok: false, error: e.message });
 		}
+	}
+
+	// --- Admin: Users CRUD ---
+	if (req.url === '/api/admin/users' && req.method === 'GET') {
+		return sendJson(res, 200, readJson('users.json'));
+	}
+	if (req.url === '/api/admin/users' && req.method === 'POST') {
+		try {
+			const body = await parseBody(req);
+			const users = readJson('users.json');
+			const user = { id: Date.now().toString(), createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(), ...body };
+			users.push(user);
+			writeJson('users.json', users);
+			logActivity('create', 'user', user.id, user);
+			return sendJson(res, 201, user);
+		} catch (e) { return sendJson(res, 400, { ok: false, error: e.message }); }
+	}
+	if (req.url.startsWith('/api/admin/users/') && req.method === 'PUT') {
+		try {
+			const id = req.url.split('/').pop();
+			const body = await parseBody(req);
+			const users = readJson('users.json');
+			const idx = users.findIndex(u => u.id === id);
+			if (idx < 0) return sendJson(res, 404, { ok: false, error: 'Not found' });
+			users[idx] = { ...users[idx], ...body, updatedAt: new Date().toISOString() };
+			writeJson('users.json', users);
+			logActivity('update', 'user', id, body);
+			return sendJson(res, 200, users[idx]);
+		} catch (e) { return sendJson(res, 400, { ok: false, error: e.message }); }
+	}
+	if (req.url.startsWith('/api/admin/users/') && req.method === 'DELETE') {
+		const id = req.url.split('/').pop();
+		const users = readJson('users.json');
+		const next = users.filter(u => u.id !== id);
+		writeJson('users.json', next);
+		logActivity('delete', 'user', id, {});
+		return sendJson(res, 200, { ok: true });
+	}
+
+	// --- Admin: Orders CRUD ---
+	if (req.url === '/api/admin/orders' && req.method === 'GET') {
+		return sendJson(res, 200, readJson('orders.json'));
+	}
+	if (req.url === '/api/admin/orders' && req.method === 'POST') {
+		try {
+			const body = await parseBody(req);
+			const orders = readJson('orders.json');
+			const order = { id: Date.now().toString(), createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(), status: 'pending', items: [], ...body };
+			orders.push(order);
+			writeJson('orders.json', orders);
+			logActivity('create', 'order', order.id, order);
+			return sendJson(res, 201, order);
+		} catch (e) { return sendJson(res, 400, { ok: false, error: e.message }); }
+	}
+	if (req.url.startsWith('/api/admin/orders/') && req.method === 'PUT') {
+		try {
+			const id = req.url.split('/').pop();
+			const body = await parseBody(req);
+			const orders = readJson('orders.json');
+			const idx = orders.findIndex(o => o.id === id);
+			if (idx < 0) return sendJson(res, 404, { ok: false, error: 'Not found' });
+			orders[idx] = { ...orders[idx], ...body, updatedAt: new Date().toISOString() };
+			writeJson('orders.json', orders);
+			logActivity('update', 'order', id, body);
+			return sendJson(res, 200, orders[idx]);
+		} catch (e) { return sendJson(res, 400, { ok: false, error: e.message }); }
+	}
+	if (req.url.startsWith('/api/admin/orders/') && req.method === 'DELETE') {
+		const id = req.url.split('/').pop();
+		const orders = readJson('orders.json');
+		const next = orders.filter(o => o.id !== id);
+		writeJson('orders.json', next);
+		logActivity('delete', 'order', id, {});
+		return sendJson(res, 200, { ok: true });
+	}
+
+	// --- Admin: Stock movements & summary ---
+	if (req.url === '/api/admin/stock/movements' && req.method === 'GET') {
+		return sendJson(res, 200, readJson('stock_movements.json'));
+	}
+	if (req.url === '/api/admin/stock/movements' && req.method === 'POST') {
+		try {
+			const body = await parseBody(req);
+			const movements = readJson('stock_movements.json');
+			const mv = { id: Date.now().toString(), createdAt: new Date().toISOString(), ...body };
+			movements.push(mv);
+			writeJson('stock_movements.json', movements);
+			logActivity('create', 'stock_movement', mv.id, mv);
+			return sendJson(res, 201, mv);
+		} catch (e) { return sendJson(res, 400, { ok: false, error: e.message }); }
+	}
+	if (req.url.startsWith('/api/admin/stock/summary') && req.method === 'GET') {
+		const url = new URL(req.url, 'http://localhost');
+		const type = url.searchParams.get('type');
+		const rams = readJson('rams.json');
+		const beans = readJson('beans.json');
+		const movements = readJson('stock_movements.json');
+		const source = type === 'ram' ? rams : type === 'bean' ? beans : rams.concat(beans.map(b => ({...b, type: 'bean'})));
+		const byId = {};
+		for (const p of source) byId[p.id] = { productId: p.id, name: p.name, type: type || (p.breed ? 'ram' : 'bean'), stock: 0 };
+		for (const m of movements) {
+			if (type && m.productType !== type) continue;
+			if (!byId[m.productId]) continue;
+			byId[m.productId].stock += Number(m.quantityChange || 0);
+		}
+		return sendJson(res, 200, Object.values(byId));
+	}
+
+	// --- Admin: Settings ---
+	if (req.url === '/api/admin/settings' && req.method === 'GET') {
+		return sendJson(res, 200, readJsonObject('settings.json'));
+	}
+	if (req.url === '/api/admin/settings' && req.method === 'PUT') {
+		try {
+			const body = await parseBody(req);
+			writeJsonObject('settings.json', { ...readJsonObject('settings.json'), ...body, updatedAt: new Date().toISOString() });
+			logActivity('update', 'settings', 'settings', body);
+			return sendJson(res, 200, { ok: true });
+		} catch (e) { return sendJson(res, 400, { ok: false, error: e.message }); }
+	}
+
+	// --- Admin: Logs & Reports ---
+	if (req.url === '/api/admin/logs' && req.method === 'GET') {
+		return sendJson(res, 200, readJson('activity_logs.json'));
+	}
+	if (req.url === '/api/admin/reports/overview' && req.method === 'GET') {
+		const users = readJson('users.json');
+		const orders = readJson('orders.json');
+		const inquiries = readJson('inquiries.json');
+		const movements = readJson('stock_movements.json');
+		const byType = users.reduce((acc,u)=>{ acc[u.type||'unknown']=(acc[u.type||'unknown']||0)+1; return acc; },{});
+		const orderByStatus = orders.reduce((acc,o)=>{ acc[o.status||'pending']=(acc[o.status||'pending']||0)+1; return acc; },{});
+		const revenue = orders.reduce((sum,o)=> sum + Number(o.totalAmount||0), 0);
+		const monthly = {};
+		for (const o of orders) {
+			const d = new Date(o.createdAt || Date.now());
+			const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+			if (!monthly[key]) monthly[key] = { month: key, orders: 0, revenue: 0 };
+			monthly[key].orders += 1;
+			monthly[key].revenue += Number(o.totalAmount||0);
+		}
+		const stockTotals = movements.reduce((acc,m)=>{ const key = `${m.productType}:${m.productId}`; acc[key]=(acc[key]||0)+Number(m.quantityChange||0); return acc; },{});
+		return sendJson(res, 200, { users: { total: users.length, byType }, orders: { total: orders.length, byStatus: orderByStatus, revenue }, inquiries: { total: inquiries.length }, growth: Object.values(monthly), stockKeys: Object.keys(stockTotals).length });
 	}
 
 	return serveStatic(req, res);
@@ -178,6 +379,14 @@ ensureDirs();
 const originalServeStatic = serveStatic;
 
 // Create a simple server
+function logActivity(action, entity, entityId, details) {
+	try {
+		const logs = readJson('activity_logs.json');
+		logs.push({ id: Date.now().toString(), createdAt: new Date().toISOString(), actor: 'admin', action, entity, entityId, details });
+		writeJson('activity_logs.json', logs);
+	} catch (e) {}
+}
+
 const server = http.createServer((req, res) => {
 	// Serve uploaded files directly
 	if (req.url.startsWith('/uploads/')) {
