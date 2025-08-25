@@ -19,6 +19,7 @@
 <body>
 	<div class="container">
 		<h1>Admin Dashboard</h1>
+		<p><a href="/admin/reports.html">Go to Reports</a> | <a href="#" onclick="logout()">Logout</a></p>
 		<p>Add rams and beans, and upload videos. Data is stored locally.</p>
 
 		<div class="card">
@@ -239,6 +240,14 @@
 		}
 
 		refresh();
+	</script>
+
+	<script>
+		(async function guard(){
+			const res = await fetch('/api/admin/session');
+			if (!res.ok) window.location.href = '/admin/login.html';
+		})();
+		async function logout(){ await fetch('/api/admin/logout', { method: 'POST' }); window.location.href = '/admin/login.html'; }
 	</script>
 </body>
 </html>

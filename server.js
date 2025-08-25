@@ -41,6 +41,18 @@ const sendJson = (res, status, obj) => {
 	res.end(JSON.stringify(obj));
 };
 
+const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'admin123';
+const activeSessions = new Set();
+
+const parseCookies = (req) => {
+	const header = req.headers['cookie'] || '';
+	return header.split(';').reduce((acc, part) => {
+		const [k, v] = part.trim().split('=');
+		if (k) acc[k] = decodeURIComponent(v || '');
+		return acc;
+	}, {});
+};
+
 const parseBody = (req) => new Promise((resolve, reject) => {
 	let body = '';
 	req.on('data', chunk => {
@@ -101,6 +113,46 @@ const routes = async (req, res) => {
 			'Access-Control-Allow-Headers': 'Content-Type'
 		});
 		return res.end();
+	}
+
+	// Auth: login/logout/session
+	if (req.url === '/api/admin/login' && req.method === 'POST') {
+		try {
+			const body = await parseBody(req);
+			if ((body.password || '') !== ADMIN_PASSWORD) {
+				res.writeHead(401, { 'Content-Type': 'application/json' });
+				return res.end(JSON.stringify({ ok: false, error: 'Invalid credentials' }));
+			}
+			const token = Math.random().toString(36).slice(2) + Date.now().toString(36);
+			activeSessions.add(token);
+			res.writeHead(200, {
+				'Content-Type': 'application/json',
+				'Set-Cookie': `admin_session=${encodeURIComponent(token)}; Path=/; HttpOnly; SameSite=Lax`
+			});
+			return res.end(JSON.stringify({ ok: true }));
+		} catch (e) { return sendJson(res, 400, { ok: false, error: e.message }); }
+	}
+	if (req.url === '/api/admin/logout' && req.method === 'POST') {
+		const cookies = parseCookies(req);
+		if (cookies.admin_session) activeSessions.delete(cookies.admin_session);
+		res.writeHead(200, {
+			'Content-Type': 'application/json',
+			'Set-Cookie': 'admin_session=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax'
+		});
+		return res.end(JSON.stringify({ ok: true }));
+	}
+	if (req.url === '/api/admin/session' && req.method === 'GET') {
+		const cookies = parseCookies(req);
+		const ok = cookies.admin_session && activeSessions.has(cookies.admin_session);
+		if (!ok) { res.writeHead(401); return res.end('Unauthorized'); }
+		return sendJson(res, 200, { ok: true });
+	}
+
+	// Gate admin APIs except login/session
+	if (req.url.startsWith('/api/admin/') && !['/api/admin/login','/api/admin/session'].includes(req.url)) {
+		const cookies = parseCookies(req);
+		const ok = cookies.admin_session && activeSessions.has(cookies.admin_session);
+		if (!ok) { res.writeHead(401); return res.end('Unauthorized'); }
 	}
 
 	if (req.url === '/api/rams' && req.method === 'GET') {
