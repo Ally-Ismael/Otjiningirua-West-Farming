@@ -13,7 +13,13 @@
 		button { background: #2c5530; color: #fff; border: 0; padding: 10px 16px; border-radius: 6px; cursor: pointer; }
 		button:disabled { background: #9bb29e; }
 		.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
-		pre { white-space: pre-wrap; background: #f6f8fa; padding: 10px; border-radius: 6px; }
+		.table { width: 100%; border-collapse: collapse; font-size: 14px; }
+		.table th, .table td { border: 1px solid #e5e7eb; padding: 8px; text-align: left; }
+		.table th { background: #f3f4f6; }
+		.badge { display: inline-block; padding: 3px 8px; border-radius: 999px; font-size: 12px; }
+		.badge.available { background: #e8f5e9; color: #2e7d32; }
+		.badge.reserved { background: #fff8e1; color: #ff8f00; }
+		.badge.sold { background: #ffebee; color: #c62828; }
 	</style>
 </head>
 <body>
@@ -44,23 +50,20 @@
 				<option value="bean">Bean</option>
 			</select>
 			<input id="parentId" placeholder="Parent ID" />
-			<input type="file" id="videoFile" accept="video/*" />
+			<select id="mediaType"><option value="image">Image</option><option value="video" selected>Video</option></select>
+			<input type="file" id="videoFile" accept="image/*,video/*" />
 			<button onclick="uploadVideo()">Upload</button>
 			<div id="uploadResult"></div>
 		</div>
 
 		<div class="card">
-			<h2>Current Data</h2>
-			<div class="grid">
-				<div>
-					<h3>Rams</h3>
-					<pre id="rams"></pre>
-				</div>
-				<div>
-					<h3>Beans</h3>
-					<pre id="beans"></pre>
-				</div>
-			</div>
+			<h2>Rams</h2>
+			<table class="table" id="ramsTable"><thead><tr><th>ID</th><th>Name</th><th>Status</th><th>Breed</th><th>Price</th><th>Actions</th></tr></thead><tbody></tbody></table>
+		</div>
+
+		<div class="card">
+			<h2>Beans</h2>
+			<table class="table" id="beansTable"><thead><tr><th>ID</th><th>Name</th><th>Status</th><th>Variety</th><th>Price/kg</th><th>Actions</th></tr></thead><tbody></tbody></table>
 		</div>
 
 		<div class="card">
@@ -73,7 +76,7 @@
 					<button onclick="createUser()">Add User</button>
 				</div>
 				<div>
-					<pre id="users"></pre>
+					<table class="table" id="usersTable"><thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Type</th><th>Status</th><th>Actions</th></tr></thead><tbody></tbody></table>
 				</div>
 			</div>
 		</div>
@@ -88,7 +91,7 @@
 					<button onclick="createOrder()">Create Order</button>
 				</div>
 				<div>
-					<pre id="orders"></pre>
+					<table class="table" id="ordersTable"><thead><tr><th>ID</th><th>User</th><th>Status</th><th>Total</th><th>Created</th><th>Actions</th></tr></thead><tbody></tbody></table>
 				</div>
 			</div>
 		</div>
@@ -104,21 +107,21 @@
 					<button onclick="addMovement()">Add Movement</button>
 				</div>
 				<div>
-					<pre id="movements"></pre>
+					<table class="table" id="movementsTable"><thead><tr><th>ID</th><th>Type</th><th>Product</th><th>Qty</th><th>Note</th><th>Created</th></tr></thead><tbody></tbody></table>
 					<h3>Summary</h3>
-					<pre id="stockSummary"></pre>
+					<table class="table" id="stockSummaryTable"><thead><tr><th>Type</th><th>Product</th><th>Stock</th></tr></thead><tbody></tbody></table>
 				</div>
 			</div>
 		</div>
 
 		<div class="card">
 			<h2>Reports & Growth</h2>
-			<pre id="report"></pre>
+			<div id="reportOverview"></div>
 		</div>
 
 		<div class="card">
 			<h2>Activity Logs</h2>
-			<pre id="logs"></pre>
+			<ul id="logsList"></ul>
 		</div>
 
 		<div class="card">
@@ -144,15 +147,27 @@
 				fetch('/api/admin/reports/overview').then(r => r.json()),
 				fetch('/api/admin/stock/summary').then(r => r.json())
 			]);
-			document.getElementById('rams').textContent = JSON.stringify(rams, null, 2);
-			document.getElementById('beans').textContent = JSON.stringify(beans, null, 2);
-			document.getElementById('users').textContent = JSON.stringify(users, null, 2);
-			document.getElementById('orders').textContent = JSON.stringify(orders, null, 2);
-			document.getElementById('movements').textContent = JSON.stringify(movements, null, 2);
-			document.getElementById('logs').textContent = JSON.stringify(logs, null, 2);
+			const ramsBody = document.querySelector('#ramsTable tbody');
+			ramsBody.innerHTML = rams.map(r=>`<tr><td>${r.id}</td><td>${r.name||''}</td><td><span class="badge ${r.status}">${r.status||''}</span></td><td>${r.breed||''}</td><td>${r.price||''}</td><td><button onclick="editRam('${r.id}')">Edit</button> <button onclick="deleteRam('${r.id}')">Delete</button></td></tr>`).join('');
+
+			const beansBody = document.querySelector('#beansTable tbody');
+			beansBody.innerHTML = beans.map(b=>`<tr><td>${b.id}</td><td>${b.name||''}</td><td><span class="badge ${b.status}">${b.status||''}</span></td><td>${b.variety||''}</td><td>${b.pricePerKg||''}</td><td><button onclick="editBean('${b.id}')">Edit</button> <button onclick="deleteBean('${b.id}')">Delete</button></td></tr>`).join('');
+
+			const usersBody = document.querySelector('#usersTable tbody');
+			usersBody.innerHTML = users.map(u=>`<tr><td>${u.id}</td><td>${u.name||''}</td><td>${u.email||''}</td><td>${u.type||''}</td><td>${u.status||''}</td><td><button onclick="deleteUser('${u.id}')">Delete</button></td></tr>`).join('');
+
+			const ordersBody = document.querySelector('#ordersTable tbody');
+			ordersBody.innerHTML = orders.map(o=>`<tr><td>${o.id}</td><td>${o.userId||''}</td><td>${o.status||''}</td><td>${o.totalAmount||0}</td><td>${o.createdAt||''}</td><td><button onclick="deleteOrder('${o.id}')">Delete</button></td></tr>`).join('');
+
+			const movementsBody = document.querySelector('#movementsTable tbody');
+			movementsBody.innerHTML = movements.map(m=>`<tr><td>${m.id}</td><td>${m.productType}</td><td>${m.productId}</td><td>${m.quantityChange}</td><td>${m.note||''}</td><td>${m.createdAt}</td></tr>`).join('');
+
+			const stockBody = document.querySelector('#stockSummaryTable tbody');
+			stockBody.innerHTML = summary.map(s=>`<tr><td>${s.type||''}</td><td>${s.productId} - ${s.name||''}</td><td>${s.stock||0}</td></tr>`).join('');
+
 			document.getElementById('settings').textContent = JSON.stringify(settings, null, 2);
-			document.getElementById('report').textContent = JSON.stringify(report, null, 2);
-			document.getElementById('stockSummary').textContent = JSON.stringify(summary, null, 2);
+			document.getElementById('reportOverview').innerHTML = `<strong>Users:</strong> ${report.users.total} &nbsp; <strong>Orders:</strong> ${report.orders.total} &nbsp; <strong>Revenue:</strong> ${report.orders.revenue}`;
+			document.getElementById('logsList').innerHTML = logs.slice(0,10).map(l=>`<li>[${l.createdAt}] ${l.action} ${l.entity} (${l.entityId||''})</li>`).join('');
 		}
 
 		async function addRam() {
@@ -175,6 +190,25 @@
 			refresh();
 		}
 
+		async function editRam(id){
+			const name = prompt('Name');
+			const status = prompt('Status (available/reserved/sold)');
+			await fetch(`/api/admin/rams/${id}`, { method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ name: name||undefined, status: status||undefined }) });
+			refresh();
+		}
+		async function deleteRam(id){ if(!confirm('Delete ram?')) return; await fetch(`/api/admin/rams/${id}`, { method:'DELETE' }); refresh(); }
+
+		async function editBean(id){
+			const name = prompt('Name');
+			const status = prompt('Status (available/out_of_stock/discontinued)');
+			await fetch(`/api/admin/beans/${id}`, { method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ name: name||undefined, status: status||undefined }) });
+			refresh();
+		}
+		async function deleteBean(id){ if(!confirm('Delete bean?')) return; await fetch(`/api/admin/beans/${id}`, { method:'DELETE' }); refresh(); }
+
+		async function deleteUser(id){ if(!confirm('Delete user?')) return; await fetch(`/api/admin/users/${id}`, { method:'DELETE' }); refresh(); }
+		async function deleteOrder(id){ if(!confirm('Delete order?')) return; await fetch(`/api/admin/orders/${id}`, { method:'DELETE' }); refresh(); }
+
 		function fileToBase64(file) {
 			return new Promise((resolve, reject) => {
 				const reader = new FileReader();
@@ -188,9 +222,10 @@
 			const parentType = document.getElementById('parentType').value;
 			const parentId = document.getElementById('parentId').value.trim();
 			const file = document.getElementById('videoFile').files[0];
+			const mediaType = document.getElementById('mediaType').value;
 			if (!parentType || !parentId || !file) return alert('All fields required');
 			const base64 = await fileToBase64(file);
-			const resp = await fetch('/api/admin/upload', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ parentType, parentId, base64, filename: file.name }) });
+			const resp = await fetch('/api/admin/upload', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ parentType, parentId, base64, filename: file.name, mediaType }) });
 			const data = await resp.json();
 			document.getElementById('uploadResult').textContent = JSON.stringify(data, null, 2);
 			refresh();

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Bean Detail - Otjiningirua West</title>
+	<link rel="stylesheet" href="/css/styles.css">
+	<style>
+		.wrapper { display:grid; grid-template-columns: 1fr; gap: 16px; }
+		@media(min-width:900px){ .wrapper{ grid-template-columns: 1.2fr 1fr; } }
+		.card { background:#fff; border-radius:12px; padding:16px; box-shadow:0 10px 30px rgba(0,0,0,0.08); border:2px solid #eee; }
+		.gallery { display:grid; grid-template-columns: repeat(auto-fit,minmax(160px,1fr)); gap:10px; }
+		.gallery img, .gallery video { width:100%; border-radius:8px; }
+		.field { margin: 8px 0; }
+		.label { color:#2c5530; font-weight:600; }
+		.badge { display:inline-block; padding:4px 10px; border-radius:999px; font-size:12px; font-weight:600; }
+		.badge.available { background:#e8f5e9; color:#2e7d32; }
+		.badge.out_of_stock { background:#fff8e1; color:#ff8f00; }
+		.badge.discontinued { background:#ffebee; color:#c62828; }
+		.actions { display:grid; grid-template-columns: repeat(3,1fr); gap:10px; margin-top:12px; }
+	</style>
+</head>
+<body>
+	<header>
+		<nav class="container">
+			<div class="logo">🐑 Otjiningirua West Farming</div>
+			<ul class="nav-links">
+				<li><a href="/">Home</a></li>
+				<li><a href="/rams.html">Rams</a></li>
+				<li><a href="/beans.html">Beans</a></li>
+			</ul>
+		</nav>
+	</header>
+	<main class="container" style="padding:24px;">
+		<div id="content" class="wrapper"></div>
+	</main>
+	<script>
+		const CALL_NO = '+264811220667';
+		const WA_NO = '264811220667';
+		function q(k){ return new URLSearchParams(location.search).get(k); }
+		function statusClass(s){ return s==='available'?'available':s==='out_of_stock'?'out_of_stock':'discontinued'; }
+		function mediaBlocks(m){
+			return (m||[]).map(x=> x.type==='video' ? `<video controls src="${x.url}"></video>` : `<img src="${x.url}" alt="media">`).join('');
+		}
+		async function load(){
+			const id = q('id');
+			const beans = await fetch('/api/beans').then(r=>r.json());
+			const b = beans.find(x=> String(x.id)===String(id));
+			if(!b){ document.getElementById('content').innerHTML = '<p>Not found.</p>'; return; }
+			document.title = `${b.name||'Beans'} - Otjiningirua West`;
+			document.getElementById('content').innerHTML = `
+				<div class="card">
+					<h1 style="margin-bottom:8px;">${b.name||'Beans'}</h1>
+					<div class="badge ${statusClass(b.status)}">${(b.status||'available').toUpperCase()}</div>
+					<div class="field"><span class="label">Variety:</span> ${b.variety||'-'}</div>
+					<div class="field"><span class="label">Price per kg:</span> ${b.pricePerKg?('N$ '+b.pricePerKg):'-'}</div>
+					<div class="field"><span class="label">Description:</span> ${b.description||'-'}</div>
+					<h3 style="margin-top:12px;">Media Gallery</h3>
+					<div class="gallery">${mediaBlocks(b.media)}</div>
+					<div class="actions">
+						<a class="cta-button" href="#" onclick="openBooking('${encodeURIComponent(b.name||b.id)}'); return false;">Book</a>
+						<a class="cta-button" href="tel:${CALL_NO}">Call Now</a>
+						<a class="cta-button" target="_blank" href="https://wa.me/${WA_NO}?text=${encodeURIComponent('Hi, I am interested in Beans - '+(b.name||b.id))}">WhatsApp</a>
+					</div>
+				</div>
+			`;
+		}
+		function openBooking(name){
+			const msg = `I'd like to book Beans ${decodeURIComponent(name)}.`;
+			window.location.href = `mailto:info@otjiningirua.com?subject=Booking%20Request&body=${encodeURIComponent(msg)}`;
+		}
+		load();
+	</script>
+</body>
+</html>
+

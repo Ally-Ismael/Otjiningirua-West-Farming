@@ -159,7 +159,7 @@ const routes = async (req, res) => {
 	if (req.url === '/api/rams' && req.method === 'GET') {
 		const db = await getDb();
 		if (db) {
-			const [rows] = await db.query('SELECT id, name, description, breed, price, status, created_at AS createdAt, updated_at AS updatedAt FROM rams ORDER BY created_at DESC');
+			const [rows] = await db.query('SELECT id, name, description, breed, price, status, born_date AS bornDate, weight_kg AS weightKg, color, health_status AS healthStatus, bloodline, created_at AS createdAt, updated_at AS updatedAt FROM rams ORDER BY created_at DESC');
 			const [media] = await db.query("SELECT parent_type, parent_id, media_type AS type, url FROM media WHERE parent_type='ram'");
 			const byId = Object.fromEntries(rows.map(r => [String(r.id), { ...r, id: String(r.id), media: [] }]));
 			for (const m of media) { const k = String(m.parent_id); if (byId[k]) byId[k].media.push({ type: m.type, url: m.url }); }
@@ -199,7 +199,7 @@ const routes = async (req, res) => {
 			const body = await parseBody(req);
 			const db = await getDb();
 			if (db) {
-				const [r] = await db.execute('INSERT INTO rams (name, description, breed, price, status) VALUES (?,?,?,?,?)', [body.name||'', body.description||null, body.breed||null, body.price||null, body.status||'available']);
+				const [r] = await db.execute('INSERT INTO rams (name, description, breed, price, status, born_date, weight_kg, color, health_status, bloodline) VALUES (?,?,?,?,?,?,?,?,?,?)', [body.name||'', body.description||null, body.breed||null, body.price||null, body.status||'available', body.bornDate||null, body.weightKg||null, body.color||null, body.healthStatus||null, body.bloodline||null]);
 				const ram = { id: String(r.insertId), createdAt: new Date().toISOString(), media: [], ...body };
 				logActivity('create', 'ram', ram.id, ram);
 				return sendJson(res, 201, ram);
@@ -220,7 +220,7 @@ const routes = async (req, res) => {
 			const body = await parseBody(req);
 			const db = await getDb();
 			if (db) {
-				await db.execute('UPDATE rams SET name=COALESCE(?,name), description=COALESCE(?,description), breed=COALESCE(?,breed), price=COALESCE(?,price), status=COALESCE(?,status) WHERE id=?', [body.name, body.description, body.breed, body.price, body.status, id]);
+				await db.execute('UPDATE rams SET name=COALESCE(?,name), description=COALESCE(?,description), breed=COALESCE(?,breed), price=COALESCE(?,price), status=COALESCE(?,status), born_date=COALESCE(?,born_date), weight_kg=COALESCE(?,weight_kg), color=COALESCE(?,color), health_status=COALESCE(?,health_status), bloodline=COALESCE(?,bloodline) WHERE id=?', [body.name, body.description, body.breed, body.price, body.status, body.bornDate, body.weightKg, body.color, body.healthStatus, body.bloodline, id]);
 				logActivity('update', 'ram', id, body);
 				return sendJson(res, 200, { ok: true });
 			}
@@ -303,7 +303,7 @@ const routes = async (req, res) => {
 	if (req.url.startsWith('/api/admin/upload') && req.method === 'POST') {
 		try {
 			const body = await parseBody(req);
-			const { parentType, parentId, base64, filename } = body;
+			const { parentType, parentId, base64, filename, mediaType } = body;
 			if (!parentType || !parentId || !base64 || !filename) {
 				return sendJson(res, 400, { ok: false, error: 'Missing fields' });
 			}
@@ -312,9 +312,11 @@ const routes = async (req, res) => {
 			const outPath = path.join(UPLOADS_DIR, safeName);
 			fs.writeFileSync(outPath, buffer);
 			const publicUrl = `/uploads/${safeName}`;
+			const ext = path.extname(safeName).toLowerCase();
+			const inferredType = mediaType || (['.png','.jpg','.jpeg','.gif','.webp'].includes(ext) ? 'image' : ['.mp4','.webm','.mov','.m4v'].includes(ext) ? 'video' : 'image');
 			const db = await getDb();
 			if (db) {
-				await db.execute('INSERT INTO media (parent_type, parent_id, media_type, url) VALUES (?,?,?,?)', [parentType, parentId, 'video', publicUrl]);
+				await db.execute('INSERT INTO media (parent_type, parent_id, media_type, url) VALUES (?,?,?,?)', [parentType, parentId, inferredType, publicUrl]);
 				logActivity('upload', parentType === 'ram' ? 'ram_media' : 'bean_media', parentId, { url: publicUrl, filename: safeName });
 			} else {
 				if (parentType === 'ram') {
@@ -322,7 +324,7 @@ const routes = async (req, res) => {
 					const idx = rams.findIndex(r => r.id === parentId);
 					if (idx >= 0) {
 						rams[idx].media = rams[idx].media || [];
-						rams[idx].media.push({ type: 'video', url: publicUrl, filename: safeName });
+						rams[idx].media.push({ type: inferredType, url: publicUrl, filename: safeName });
 						writeJson('rams.json', rams);
 						logActivity('upload', 'ram_media', parentId, { url: publicUrl, filename: safeName });
 					}
@@ -332,7 +334,7 @@ const routes = async (req, res) => {
 					const idx = beans.findIndex(b => b.id === parentId);
 					if (idx >= 0) {
 						beans[idx].media = beans[idx].media || [];
-						beans[idx].media.push({ type: 'video', url: publicUrl, filename: safeName });
+						beans[idx].media.push({ type: inferredType, url: publicUrl, filename: safeName });
 						writeJson('beans.json', beans);
 						logActivity('upload', 'bean_media', parentId, { url: publicUrl, filename: safeName });
 					}
