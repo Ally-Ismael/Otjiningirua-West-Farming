@@ -1,1 +1,253 @@
 ""  
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Admin - Otjiningirua West</title>
+	<style>
+		body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial, sans-serif; margin: 20px; }
+		.container { max-width: 900px; margin: 0 auto; }
+		.card { border: 1px solid #ddd; border-radius: 8px; padding: 16px; margin-bottom: 16px; }
+		input, textarea, select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; margin: 8px 0; }
+		button { background: #2c5530; color: #fff; border: 0; padding: 10px 16px; border-radius: 6px; cursor: pointer; }
+		button:disabled { background: #9bb29e; }
+		.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+		pre { white-space: pre-wrap; background: #f6f8fa; padding: 10px; border-radius: 6px; }
+	</style>
+</head>
+<body>
+	<div class="container">
+		<h1>Admin Dashboard</h1>
+		<p><a href="/admin/reports.html">Go to Reports</a> | <a href="#" onclick="logout()">Logout</a></p>
+		<p>Add rams and beans, and upload videos. Data is stored locally.</p>
+
+		<div class="card">
+			<h2>Add Ram</h2>
+			<input id="ramName" placeholder="Name" />
+			<textarea id="ramDesc" placeholder="Description"></textarea>
+			<button onclick="addRam()">Save Ram</button>
+		</div>
+
+		<div class="card">
+			<h2>Add Bean Product</h2>
+			<input id="beanName" placeholder="Name" />
+			<textarea id="beanDesc" placeholder="Description"></textarea>
+			<button onclick="addBean()">Save Bean</button>
+		</div>
+
+		<div class="card">
+			<h2>Upload Video</h2>
+			<select id="parentType">
+				<option value="">Select type</option>
+				<option value="ram">Ram</option>
+				<option value="bean">Bean</option>
+			</select>
+			<input id="parentId" placeholder="Parent ID" />
+			<input type="file" id="videoFile" accept="video/*" />
+			<button onclick="uploadVideo()">Upload</button>
+			<div id="uploadResult"></div>
+		</div>
+
+		<div class="card">
+			<h2>Current Data</h2>
+			<div class="grid">
+				<div>
+					<h3>Rams</h3>
+					<pre id="rams"></pre>
+				</div>
+				<div>
+					<h3>Beans</h3>
+					<pre id="beans"></pre>
+				</div>
+			</div>
+		</div>
+
+		<div class="card">
+			<h2>Users</h2>
+			<div class="grid">
+				<div>
+					<input id="userName" placeholder="Full name" />
+					<input id="userEmail" placeholder="Email" />
+					<select id="userType"><option value="individual">Individual</option><option value="business">Business</option><option value="admin">Admin</option></select>
+					<button onclick="createUser()">Add User</button>
+				</div>
+				<div>
+					<pre id="users"></pre>
+				</div>
+			</div>
+		</div>
+
+		<div class="card">
+			<h2>Orders</h2>
+			<div class="grid">
+				<div>
+					<input id="orderUserId" placeholder="User ID" />
+					<input id="orderTotal" placeholder="Total Amount" />
+					<select id="orderStatus"><option value="pending">pending</option><option value="paid">paid</option><option value="shipped">shipped</option><option value="cancelled">cancelled</option></select>
+					<button onclick="createOrder()">Create Order</button>
+				</div>
+				<div>
+					<pre id="orders"></pre>
+				</div>
+			</div>
+		</div>
+
+		<div class="card">
+			<h2>Stock</h2>
+			<div class="grid">
+				<div>
+					<select id="stockType"><option value="ram">Ram</option><option value="bean">Bean</option></select>
+					<input id="stockProductId" placeholder="Product ID" />
+					<input id="stockQty" placeholder="Quantity Change (e.g., 5 or -2)" />
+					<input id="stockNote" placeholder="Note" />
+					<button onclick="addMovement()">Add Movement</button>
+				</div>
+				<div>
+					<pre id="movements"></pre>
+					<h3>Summary</h3>
+					<pre id="stockSummary"></pre>
+				</div>
+			</div>
+		</div>
+
+		<div class="card">
+			<h2>Reports & Growth</h2>
+			<pre id="report"></pre>
+		</div>
+
+		<div class="card">
+			<h2>Activity Logs</h2>
+			<pre id="logs"></pre>
+		</div>
+
+		<div class="card">
+			<h2>Settings</h2>
+			<input id="setPhone" placeholder="Phone e.g. +264..." />
+			<input id="setEmail" placeholder="Email" />
+			<input id="setLocation" placeholder="Location" />
+			<button onclick="saveSettings()">Save Settings</button>
+			<pre id="settings"></pre>
+		</div>
+	</div>
+
+	<script>
+		async function refresh() {
+			const [rams, beans, users, orders, movements, logs, settings, report, summary] = await Promise.all([
+				fetch('/api/rams').then(r => r.json()),
+				fetch('/api/beans').then(r => r.json()),
+				fetch('/api/admin/users').then(r => r.json()),
+				fetch('/api/admin/orders').then(r => r.json()),
+				fetch('/api/admin/stock/movements').then(r => r.json()),
+				fetch('/api/admin/logs').then(r => r.json()),
+				fetch('/api/admin/settings').then(r => r.json()),
+				fetch('/api/admin/reports/overview').then(r => r.json()),
+				fetch('/api/admin/stock/summary').then(r => r.json())
+			]);
+			document.getElementById('rams').textContent = JSON.stringify(rams, null, 2);
+			document.getElementById('beans').textContent = JSON.stringify(beans, null, 2);
+			document.getElementById('users').textContent = JSON.stringify(users, null, 2);
+			document.getElementById('orders').textContent = JSON.stringify(orders, null, 2);
+			document.getElementById('movements').textContent = JSON.stringify(movements, null, 2);
+			document.getElementById('logs').textContent = JSON.stringify(logs, null, 2);
+			document.getElementById('settings').textContent = JSON.stringify(settings, null, 2);
+			document.getElementById('report').textContent = JSON.stringify(report, null, 2);
+			document.getElementById('stockSummary').textContent = JSON.stringify(summary, null, 2);
+		}
+
+		async function addRam() {
+			const name = document.getElementById('ramName').value.trim();
+			const description = document.getElementById('ramDesc').value.trim();
+			if (!name) return alert('Name required');
+			await fetch('/api/admin/rams', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, description }) });
+			document.getElementById('ramName').value = '';
+			document.getElementById('ramDesc').value = '';
+			refresh();
+		}
+
+		async function addBean() {
+			const name = document.getElementById('beanName').value.trim();
+			const description = document.getElementById('beanDesc').value.trim();
+			if (!name) return alert('Name required');
+			await fetch('/api/admin/beans', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, description }) });
+			document.getElementById('beanName').value = '';
+			document.getElementById('beanDesc').value = '';
+			refresh();
+		}
+
+		function fileToBase64(file) {
+			return new Promise((resolve, reject) => {
+				const reader = new FileReader();
+				reader.onload = () => resolve(reader.result.split(',')[1]);
+				reader.onerror = reject;
+				reader.readAsDataURL(file);
+			});
+		}
+
+		async function uploadVideo() {
+			const parentType = document.getElementById('parentType').value;
+			const parentId = document.getElementById('parentId').value.trim();
+			const file = document.getElementById('videoFile').files[0];
+			if (!parentType || !parentId || !file) return alert('All fields required');
+			const base64 = await fileToBase64(file);
+			const resp = await fetch('/api/admin/upload', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ parentType, parentId, base64, filename: file.name }) });
+			const data = await resp.json();
+			document.getElementById('uploadResult').textContent = JSON.stringify(data, null, 2);
+			refresh();
+		}
+
+		async function createUser() {
+			const name = document.getElementById('userName').value.trim();
+			const email = document.getElementById('userEmail').value.trim();
+			const type = document.getElementById('userType').value;
+			if (!name) return alert('Name required');
+			await fetch('/api/admin/users', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, email, type }) });
+			document.getElementById('userName').value = '';
+			document.getElementById('userEmail').value = '';
+			refresh();
+		}
+
+		async function createOrder() {
+			const userId = document.getElementById('orderUserId').value.trim();
+			const totalAmount = parseFloat(document.getElementById('orderTotal').value || '0');
+			const status = document.getElementById('orderStatus').value;
+			if (!userId) return alert('User ID required');
+			await fetch('/api/admin/orders', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId, totalAmount, status }) });
+			document.getElementById('orderUserId').value = '';
+			document.getElementById('orderTotal').value = '';
+			refresh();
+		}
+
+		async function addMovement() {
+			const productType = document.getElementById('stockType').value;
+			const productId = document.getElementById('stockProductId').value.trim();
+			const quantityChange = parseFloat(document.getElementById('stockQty').value || '0');
+			const note = document.getElementById('stockNote').value.trim();
+			if (!productId || !quantityChange) return alert('Product ID and quantity needed');
+			await fetch('/api/admin/stock/movements', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ productType, productId, quantityChange, note }) });
+			document.getElementById('stockProductId').value = '';
+			document.getElementById('stockQty').value = '';
+			document.getElementById('stockNote').value = '';
+			refresh();
+		}
+
+		async function saveSettings() {
+			const phone = document.getElementById('setPhone').value.trim();
+			const email = document.getElementById('setEmail').value.trim();
+			const location = document.getElementById('setLocation').value.trim();
+			await fetch('/api/admin/settings', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone, email, location }) });
+			refresh();
+		}
+
+		refresh();
+	</script>
+
+	<script>
+		(async function guard(){
+			const res = await fetch('/api/admin/session');
+			if (!res.ok) window.location.href = '/admin/login.html';
+		})();
+		async function logout(){ await fetch('/api/admin/logout', { method: 'POST' }); window.location.href = '/admin/login.html'; }
+	</script>
+</body>
+</html>

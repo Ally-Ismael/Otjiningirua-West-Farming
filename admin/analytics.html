@@ -1,1 +1,56 @@
 "" 
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Inquiries - Otjiningirua West</title>
+	<style>
+		body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial, sans-serif; margin: 20px; }
+		.container { max-width: 900px; margin: 0 auto; }
+		table { width: 100%; border-collapse: collapse; }
+		th, td { border: 1px solid #e5e7eb; padding: 8px; text-align: left; font-size: 14px; }
+		th { background: #f3f4f6; }
+	</style>
+</head>
+<body>
+	<div class="container">
+		<h1>Customer Inquiries</h1>
+		<table>
+			<thead>
+				<tr>
+					<th>When</th>
+					<th>Product</th>
+					<th>Name</th>
+					<th>Email</th>
+					<th>Phone</th>
+					<th>Quantity</th>
+					<th>Message</th>
+				</tr>
+			</thead>
+			<tbody id="rows"></tbody>
+		</table>
+	</div>
+
+	<script>
+		async function load() {
+			const res = await fetch('/data/inquiries.json');
+			let list = [];
+			try { list = await res.json(); } catch(e) {}
+			const rows = document.getElementById('rows');
+			rows.innerHTML = list.map(i => `
+				<tr>
+					<td>${new Date(i.createdAt).toLocaleString()}</td>
+					<td>${i.product||''}</td>
+					<td>${i.name||''}</td>
+					<td>${i.email||''}</td>
+					<td>${i.phone||''}</td>
+					<td>${i.quantity||''}</td>
+					<td>${(i.message||'').replace(/</g,'&lt;')}</td>
+				</tr>
+			`).join('');
+		}
+		load();
+	</script>
+</body>
+</html>

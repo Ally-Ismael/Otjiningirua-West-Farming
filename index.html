@@ -608,43 +608,36 @@
 
     <script>
         // Contact form handling
-        document.getElementById('contactForm').addEventListener('submit', function(e) {
+        document.getElementById('contactForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            // Simulate form submission
             const formData = new FormData(this);
             const data = Object.fromEntries(formData);
-            
-            // Here you would normally send data to your backend
-            console.log('Form submission:', data);
-            
-            // Show success message
-            const successMessage = document.getElementById('successMessage');
-            successMessage.style.display = 'block';
-            
-            // Reset form
-            this.reset();
-            
-            // Hide success message after 5 seconds
-            setTimeout(() => {
-                successMessage.style.display = 'none';
-            }, 5000);
+            try {
+                await fetch('/api/inquiries', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+                const successMessage = document.getElementById('successMessage');
+                successMessage.style.display = 'block';
+                this.reset();
+                setTimeout(() => { successMessage.style.display = 'none'; }, 5000);
+            } catch (err) {
+                alert('Failed to send. Try again.');
+            }
         });
 
         // Quick contact form handling
-        document.getElementById('quickContactForm').addEventListener('submit', function(e) {
+        document.getElementById('quickContactForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
             const formData = new FormData(this);
             const data = Object.fromEntries(formData);
-            
-            console.log('Quick inquiry:', data);
-            
-            // Close modal and show success
-            closeModal('contactModal');
-            alert('Thank you! Your inquiry has been sent. We\'ll contact you soon.');
-            
-            this.reset();
+            try {
+                await fetch('/api/inquiries', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+                closeModal('contactModal');
+                alert('Thank you! Your inquiry has been sent. We\'ll contact you soon.');
+                this.reset();
+            } catch (err) {
+                alert('Failed to send. Try again.');
+            }
         });
 
         // Modal functions
@@ -654,41 +647,26 @@
             document.getElementById('contactModal').style.display = 'block';
         }
 
-        function openVideoModal(videoType) {
+        async function openVideoModal(videoType) {
             const modal = document.getElementById('videoModal');
             const title = document.getElementById('videoTitle');
             const content = document.getElementById('videoContent');
-            
-            if (videoType === 'rams-video') {
-                title.textContent = 'Ram Videos';
-                content.innerHTML = `
-                    <div style="text-align: center; padding: 2rem; background: #f8f9fa; border-radius: 10px;">
-                        <h3>🐑 Premium Ram Collection</h3>
-                        <p>Upload your ram videos here. You can showcase:</p>
-                        <ul style="text-align: left; max-width: 400px; margin: 0 auto;">
-                            <li>Individual ram profiles</li>
-                            <li>Breeding demonstrations</li>
-                            <li>Feeding and care routines</li>
-                            <li>Farm facility tours</li>
-                        </ul>
-                        <p style="margin-top: 1rem;"><em>Videos will be embedded here once uploaded</em></p>
-                    </div>
-                `;
-            } else if (videoType === 'beans-video') {
-                title.textContent = 'Bean Farm Videos';
-                content.innerHTML = `
-                    <div style="text-align: center; padding: 2rem; background: #f8f9fa; border-radius: 10px;">
-                        <h3>🌱 Bean Farming Process</h3>
-                        <p>Upload your bean farming videos here. You can showcase:</p>
-                        <ul style="text-align: left; max-width: 400px; margin: 0 auto;">
-                            <li>Planting and cultivation</li>
-                            <li>Growing process timeline</li>
-                            <li>Harvesting techniques</li>
-                            <li>Quality control measures</li>
-                        </ul>
-                        <p style="margin-top: 1rem;"><em>Videos will be embedded here once uploaded</em></p>
-                    </div>
-                `;
+            try {
+                const [rams, beans] = await Promise.all([
+                    fetch('/api/rams').then(r => r.json()),
+                    fetch('/api/beans').then(r => r.json())
+                ]);
+                if (videoType === 'rams-video') {
+                    title.textContent = 'Ram Videos';
+                    const videos = (rams.flatMap(r => (r.media||[]).filter(m => m.type === 'video')));
+                    content.innerHTML = videos.length ? videos.map(v => `<video src="${v.url}" controls style="width:100%; border-radius:10px; margin: 0.5rem 0;"></video>`).join('') : '<p>No videos yet.</p>';
+                } else if (videoType === 'beans-video') {
+                    title.textContent = 'Bean Farm Videos';
+                    const videos = (beans.flatMap(b => (b.media||[]).filter(m => m.type === 'video')));
+                    content.innerHTML = videos.length ? videos.map(v => `<video src="${v.url}" controls style=\"width:100%; border-radius:10px; margin: 0.5rem 0;\"></video>`).join('') : '<p>No videos yet.</p>';
+                }
+            } catch (e) {
+                content.innerHTML = '<p>Failed to load videos.</p>';
             }
             
             modal.style.display = 'block';
