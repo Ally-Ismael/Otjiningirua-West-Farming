@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>New Product</h1>
+<form method="post">
+  <input type="text" name="name" placeholder="Name" required />
+  <textarea name="description" placeholder="Description"></textarea>
+  <select name="category">
+    <option value="ram">Ram</option>
+    <option value="bean">Bean</option>
+  </select>
+  <input type="number" step="0.01" name="price" placeholder="Price" />
+  <button type="submit">Create</button>
+  <a href="/admin/products">Cancel</a>
+  </form>
+{% endblock %}
+

@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Analytics</h1>
+<table style="width:100%; border-collapse: collapse;">
+  <thead>
+    <tr>
+      <th style="text-align:left;border-bottom:1px solid #e5e7eb; padding:.5rem;">Time</th>
+      <th style="text-align:left;border-bottom:1px solid #e5e7eb; padding:.5rem;">Event</th>
+      <th style="text-align:left;border-bottom:1px solid #e5e7eb; padding:.5rem;">Path</th>
+      <th style="text-align:left;border-bottom:1px solid #e5e7eb; padding:.5rem;">Metadata</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for ev in events %}
+    <tr>
+      <td style="padding:.5rem;">{{ ev.created_at }}</td>
+      <td style="padding:.5rem;">{{ ev.event_name }}</td>
+      <td style="padding:.5rem;">{{ ev.path }}</td>
+      <td style="padding:.5rem; white-space:pre-wrap;">{{ ev.metadata }}</td>
+    </tr>
+  {% else %}
+    <tr><td colspan="4" style="padding:1rem;">No events yet.</td></tr>
+  {% endfor %}
+  </tbody>
+  </table>
+{% endblock %}
+

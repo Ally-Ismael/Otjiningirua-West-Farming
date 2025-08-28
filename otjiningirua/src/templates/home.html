@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Otjiningirua West Farming</h1>
+<section>
+  <h2>Rams</h2>
+  <div class="grid">
+    {% for ram in rams %}
+    <div class="card">
+      <h3>{{ ram.name }}</h3>
+      <p>{{ ram.description }}</p>
+      <a href="/product/{{ ram.id }}">View</a>
+    </div>
+    {% else %}
+    <p>No rams yet.</p>
+    {% endfor %}
+  </div>
+  <p><a class="button" href="/admin">Add Rams in Admin</a></p>
+  </section>
+  <section>
+  <h2>Beans</h2>
+  <div class="grid">
+    {% for bean in beans %}
+    <div class="card">
+      <h3>{{ bean.name }}</h3>
+      <p>{{ bean.description }}</p>
+      <a href="/product/{{ bean.id }}">View</a>
+    </div>
+    {% else %}
+    <p>No beans yet.</p>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}
+

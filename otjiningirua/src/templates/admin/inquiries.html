@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Inquiries</h1>
+<ul>
+  {% for i in inquiries %}
+  <li>
+    {{ i.created_at }} — <strong>{{ i.name }}</strong> ({{ i.email }}) — {{ i.message }}
+  </li>
+  {% else %}
+  <li>No inquiries yet.</li>
+  {% endfor %}
+  </ul>
+{% endblock %}
+

@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>{{ product.name }}</h1>
+<p>{{ product.description }}</p>
+<div>
+  {% for media in product.media_items %}
+    {% if media.media_type == 'video' %}
+      <video width="560" controls src="/static/{{ media.file_path }}"></video>
+    {% else %}
+      <img src="/static/{{ media.file_path }}" alt="{{ product.name }}" width="560" />
+    {% endif %}
+  {% else %}
+    <p>No media yet.</p>
+  {% endfor %}
+</div>
+<section>
+  <h3>Inquire</h3>
+  <form method="post" action="/inquiry">
+    <input type="hidden" name="product_id" value="{{ product.id }}" />
+    <input type="text" name="name" placeholder="Your Name" required />
+    <input type="email" name="email" placeholder="Email" required />
+    <input type="tel" name="phone" placeholder="Phone (optional)" />
+    <textarea name="message" placeholder="Message" required></textarea>
+    <button type="submit">Send</button>
+  </form>
+  <p>
+    <a class="button" href="https://wa.me/{{ WHATSAPP_NUMBER }}?text=I'm%20interested%20in%20{{ product.name }}" target="_blank" rel="noopener">Chat on WhatsApp</a>
+  </p>
+</section>
+{% endblock %}
+
