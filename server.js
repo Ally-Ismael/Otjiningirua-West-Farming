@@ -1,6 +1,7 @@
 const http = require('http');
 const fs = require('fs');
 const path = require('path');
+const PDFDocument = require('pdfkit');
 
 const PORT = process.env.PORT || 3000;
 const PUBLIC_DIR = path.join(__dirname);
@@ -469,6 +470,66 @@ const routes = async (req, res) => {
 	}
 
 	// --- Admin: Stock movements & summary ---
+	// PDF: Stock Summary
+	if (req.url.startsWith('/api/admin/reports/stock-summary.pdf') && req.method === 'GET') {
+		try {
+			const url = new URL(req.url, 'http://localhost');
+			const type = url.searchParams.get('type');
+			const db = await getDb();
+			let result;
+			if (db) {
+				let q = 'SELECT product_type AS productType, product_id AS productId, SUM(quantity_change) AS stock FROM stock_movements';
+				const params = [];
+				if (type) { q += ' WHERE product_type=?'; params.push(type); }
+				q += ' GROUP BY product_type, product_id';
+				const [rows] = await db.query(q, params);
+				result = rows.map(r => ({ productId: String(r.productId), name: '', type: r.productType, stock: Number(r.stock||0) }));
+				const ramIds = result.filter(r => r.type==='ram').map(r => r.productId);
+				const beanIds = result.filter(r => r.type==='bean').map(r => r.productId);
+				if (ramIds.length) {
+					const [rams] = await db.query(`SELECT id, name FROM rams WHERE id IN (${ramIds.map(()=>'?').join(',')})`, ramIds);
+					const map = Object.fromEntries(rams.map(x => [String(x.id), x.name]));
+					for (const r of result) if (r.type==='ram') r.name = map[r.productId] || '';
+				}
+				if (beanIds.length) {
+					const [beans] = await db.query(`SELECT id, name FROM beans WHERE id IN (${beanIds.map(()=>'?').join(',')})`, beanIds);
+					const map = Object.fromEntries(beans.map(x => [String(x.id), x.name]));
+					for (const r of result) if (r.type==='bean') r.name = map[r.productId] || '';
+				}
+			} else {
+				const rams = readJson('rams.json');
+				const beans = readJson('beans.json');
+				const movements = readJson('stock_movements.json');
+				const source = type === 'ram' ? rams : type === 'bean' ? beans : rams.concat(beans.map(b => ({...b, type: 'bean'})));
+				const byId = {};
+				for (const p of source) byId[p.id] = { productId: p.id, name: p.name, type: type || (p.breed ? 'ram' : 'bean'), stock: 0 };
+				for (const m of movements) {
+					if (type && m.productType !== type) continue;
+					if (!byId[m.productId]) continue;
+					byId[m.productId].stock += Number(m.quantityChange || 0);
+				}
+				result = Object.values(byId);
+			}
+			const filename = `stock-summary-${new Date().toISOString().slice(0,10)}.pdf`;
+			res.writeHead(200, { 'Content-Type': 'application/pdf', 'Content-Disposition': `attachment; filename="${filename}"`, 'Access-Control-Allow-Origin': '*' });
+			const doc = new PDFDocument({ size: 'A4', margin: 50 });
+			doc.pipe(res);
+			doc.fontSize(18).text('Stock Summary', { align: 'center' });
+			doc.moveDown(0.5);
+			doc.fontSize(10).fillColor('#666').text(`Generated: ${new Date().toLocaleString()}`);
+			doc.moveDown();
+			doc.fillColor('#000').fontSize(12);
+			for (const item of result) {
+				doc.text(`${item.type.toUpperCase()} - ${item.productId} ${item.name ? ' - ' + item.name : ''}`);
+				doc.text(`Stock: ${item.stock}`);
+				doc.moveDown(0.3);
+			}
+			doc.end();
+			return;
+		} catch (e) {
+			return sendJson(res, 500, { ok: false, error: e.message });
+		}
+	}
 	if (req.url === '/api/admin/stock/movements' && req.method === 'GET') {
 		const db = await getDb();
 		if (db) {
@@ -559,6 +620,39 @@ const routes = async (req, res) => {
 	}
 
 	// --- Admin: Logs & Reports ---
+	// PDF: Activity Logs
+	if (req.url.startsWith('/api/admin/reports/activity-logs.pdf') && req.method === 'GET') {
+		try {
+			const db = await getDb();
+			let logs;
+			if (db) {
+				const [rows] = await db.query('SELECT id, actor_user_id AS actorUserId, actor_name AS actorName, action, entity, entity_id AS entityId, details, created_at AS createdAt FROM activity_logs ORDER BY created_at DESC LIMIT 200');
+				logs = rows.map(r => ({ ...r, id: String(r.id) }));
+			} else {
+				logs = readJson('activity_logs.json');
+			}
+			const filename = `activity-logs-${new Date().toISOString().slice(0,10)}.pdf`;
+			res.writeHead(200, { 'Content-Type': 'application/pdf', 'Content-Disposition': `attachment; filename="${filename}"`, 'Access-Control-Allow-Origin': '*' });
+			const doc = new PDFDocument({ size: 'A4', margin: 50 });
+			doc.pipe(res);
+			doc.fontSize(18).text('Activity Logs', { align: 'center' });
+			doc.moveDown(0.5);
+			doc.fontSize(10).fillColor('#666').text(`Generated: ${new Date().toLocaleString()}`);
+			doc.moveDown();
+			for (const l of logs) {
+				doc.fillColor('#000').fontSize(12).text(`[${l.createdAt}] ${l.action} ${l.entity} (${l.entityId || ''}) by ${l.actorName || 'system'}`);
+				if (l.details) {
+					const detailText = typeof l.details === 'string' ? l.details : JSON.stringify(l.details);
+					doc.fontSize(9).fillColor('#444').text(detailText, { indent: 12 });
+				}
+				doc.moveDown(0.3);
+			}
+			doc.end();
+			return;
+		} catch (e) {
+			return sendJson(res, 500, { ok: false, error: e.message });
+		}
+	}
 	if (req.url === '/api/admin/logs' && req.method === 'GET') {
 		const db = await getDb();
 		if (db) {
@@ -567,6 +661,73 @@ const routes = async (req, res) => {
 		}
 		return sendJson(res, 200, readJson('activity_logs.json'));
 	}
+	// PDF: Overview Report
+	if ((req.url === '/api/admin/reports/overview.pdf' || req.url.startsWith('/api/admin/reports/overview.pdf?')) && req.method === 'GET') {
+		try {
+			const db = await getDb();
+			let report;
+			if (db) {
+				const [[{ totalUsers }]] = await db.query('SELECT COUNT(*) AS totalUsers FROM users');
+				const [usersByType] = await db.query('SELECT user_type AS type, COUNT(*) AS count FROM users GROUP BY user_type');
+				const [[{ totalOrders, revenue }]] = await db.query('SELECT COUNT(*) AS totalOrders, COALESCE(SUM(total_amount),0) AS revenue FROM orders');
+				const [ordersByStatus] = await db.query('SELECT status, COUNT(*) AS count FROM orders GROUP BY status');
+				const [monthly] = await db.query("SELECT DATE_FORMAT(created_at,'%Y-%m') AS month, COUNT(*) AS orders, COALESCE(SUM(total_amount),0) AS revenue FROM orders GROUP BY DATE_FORMAT(created_at,'%Y-%m') ORDER BY month DESC");
+				const [[{ inquiriesTotal }]] = await db.query('SELECT COUNT(*) AS inquiriesTotal FROM inquiries');
+				const [[{ stockKeys }]] = await db.query('SELECT COUNT(*) AS stockKeys FROM (SELECT product_type, product_id FROM stock_movements GROUP BY product_type, product_id) t');
+				const byType = usersByType.reduce((acc, r) => { acc[r.type||'unknown'] = Number(r.count||0); return acc; }, {});
+				const byStatus = ordersByStatus.reduce((acc, r) => { acc[r.status||'pending'] = Number(r.count||0); return acc; }, {});
+				report = { users: { total: Number(totalUsers||0), byType: byType }, orders: { total: Number(totalOrders||0), byStatus: byStatus, revenue: Number(revenue||0) }, inquiries: { total: Number(inquiriesTotal||0) }, growth: monthly, stockKeys: Number(stockKeys||0) };
+			} else {
+				const users = readJson('users.json');
+				const orders = readJson('orders.json');
+				const inquiries = readJson('inquiries.json');
+				const movements = readJson('stock_movements.json');
+				const byType = users.reduce((acc,u)=>{ acc[u.type||'unknown']=(acc[u.type||'unknown']||0)+1; return acc; },{});
+				const orderByStatus = orders.reduce((acc,o)=>{ acc[o.status||'pending']=(acc[o.status||'pending']||0)+1; return acc; },{});
+				const revenue = orders.reduce((sum,o)=> sum + Number(o.totalAmount||0), 0);
+				const monthly = {};
+				for (const o of orders) {
+					const d = new Date(o.createdAt || Date.now());
+					const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+					if (!monthly[key]) monthly[key] = { month: key, orders: 0, revenue: 0 };
+					monthly[key].orders += 1;
+					monthly[key].revenue += Number(o.totalAmount||0);
+				}
+				const stockTotals = movements.reduce((acc,m)=>{ const key = `${m.productType}:${m.productId}`; acc[key]=(acc[key]||0)+Number(m.quantityChange||0); return acc; },{});
+				report = { users: { total: users.length, byType: byType }, orders: { total: orders.length, byStatus: orderByStatus, revenue: revenue }, inquiries: { total: inquiries.length }, growth: Object.values(monthly), stockKeys: Object.keys(stockTotals).length };
+			}
+			const filename = `overview-report-${new Date().toISOString().slice(0,10)}.pdf`;
+			res.writeHead(200, { 'Content-Type': 'application/pdf', 'Content-Disposition': `attachment; filename="${filename}"`, 'Access-Control-Allow-Origin': '*' });
+			const doc = new PDFDocument({ size: 'A4', margin: 50 });
+			doc.pipe(res);
+			doc.fontSize(20).text('Business Analytics Overview', { align: 'center' });
+			doc.moveDown(0.5);
+			doc.fontSize(10).fillColor('#666').text(`Generated: ${new Date().toLocaleString()}`);
+			doc.moveDown();
+			doc.fillColor('#000').fontSize(12);
+			doc.text(`Users: ${report.users.total}`);
+			doc.text(`Orders: ${report.orders.total}`);
+			doc.text(`Revenue: ${report.orders.revenue}`);
+			doc.text(`Inquiries: ${report.inquiries.total}`);
+			doc.moveDown();
+			doc.fontSize(14).text('Users by Type');
+			doc.fontSize(12);
+			for (const [k,v] of Object.entries(report.users.byType || {})) doc.text(`- ${k}: ${v}`);
+			doc.moveDown();
+			doc.fontSize(14).text('Orders by Status');
+			doc.fontSize(12);
+			for (const [k,v] of Object.entries(report.orders.byStatus || {})) doc.text(`- ${k}: ${v}`);
+			doc.moveDown();
+			doc.fontSize(14).text('Monthly Growth');
+			doc.fontSize(12);
+			for (const g of report.growth || []) doc.text(`- ${g.month}: orders=${g.orders}, revenue=${g.revenue}`);
+			doc.end();
+			return;
+		} catch (e) {
+			return sendJson(res, 500, { ok: false, error: e.message });
+		}
+	}
+
 	if (req.url === '/api/admin/reports/overview' && req.method === 'GET') {
 		const db = await getDb();
 		if (db) {
