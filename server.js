@@ -568,7 +568,9 @@ const routes = async (req, res) => {
 		return sendJson(res, 200, readJson('activity_logs.json'));
 	}
 	if (req.url === '/api/admin/reports/overview' && req.method === 'GET') {
+		const { default: PDFDocument } = require('pdfkit');
 		const db = await getDb();
+		let metrics;
 		if (db) {
 			const [[{ totalUsers }]] = await db.query('SELECT COUNT(*) AS totalUsers FROM users');
 			const [usersByType] = await db.query('SELECT user_type AS type, COUNT(*) AS count FROM users GROUP BY user_type');
@@ -579,25 +581,62 @@ const routes = async (req, res) => {
 			const [[{ stockKeys }]] = await db.query('SELECT COUNT(*) AS stockKeys FROM (SELECT product_type, product_id FROM stock_movements GROUP BY product_type, product_id) t');
 			const byType = usersByType.reduce((acc, r) => { acc[r.type||'unknown'] = Number(r.count||0); return acc; }, {});
 			const byStatus = ordersByStatus.reduce((acc, r) => { acc[r.status||'pending'] = Number(r.count||0); return acc; }, {});
-			return sendJson(res, 200, { users: { total: Number(totalUsers||0), byType }, orders: { total: Number(totalOrders||0), byStatus, revenue: Number(revenue||0) }, inquiries: { total: Number(inquiriesTotal||0) }, growth: monthly, stockKeys: Number(stockKeys||0) });
+			metrics = { users: { total: Number(totalUsers||0), byType }, orders: { total: Number(totalOrders||0), byStatus, revenue: Number(revenue||0) }, inquiries: { total: Number(inquiriesTotal||0) }, growth: monthly, stockKeys: Number(stockKeys||0) };
+		} else {
+			const users = readJson('users.json');
+			const orders = readJson('orders.json');
+			const inquiries = readJson('inquiries.json');
+			const movements = readJson('stock_movements.json');
+			const byType = users.reduce((acc,u)=>{ acc[u.type||'unknown']=(acc[u.type||'unknown']||0)+1; return acc; },{});
+			const orderByStatus = orders.reduce((acc,o)=>{ acc[o.status||'pending']=(acc[o.status||'pending']||0)+1; return acc; },{});
+			const revenue = orders.reduce((sum,o)=> sum + Number(o.totalAmount||0), 0);
+			const monthly = {};
+			for (const o of orders) {
+				const d = new Date(o.createdAt || Date.now());
+				const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+				if (!monthly[key]) monthly[key] = { month: key, orders: 0, revenue: 0 };
+				monthly[key].orders += 1;
+				monthly[key].revenue += Number(o.totalAmount||0);
+			}
+			const stockTotals = movements.reduce((acc,m)=>{ const key = `${m.productType}:${m.productId}`; acc[key]=(acc[key]||0)+Number(m.quantityChange||0); return acc; },{});
+			metrics = { users: { total: users.length, byType }, orders: { total: orders.length, byStatus: orderByStatus, revenue }, inquiries: { total: inquiries.length }, growth: Object.values(monthly), stockKeys: Object.keys(stockTotals).length };
 		}
-		const users = readJson('users.json');
-		const orders = readJson('orders.json');
-		const inquiries = readJson('inquiries.json');
-		const movements = readJson('stock_movements.json');
-		const byType = users.reduce((acc,u)=>{ acc[u.type||'unknown']=(acc[u.type||'unknown']||0)+1; return acc; },{});
-		const orderByStatus = orders.reduce((acc,o)=>{ acc[o.status||'pending']=(acc[o.status||'pending']||0)+1; return acc; },{});
-		const revenue = orders.reduce((sum,o)=> sum + Number(o.totalAmount||0), 0);
-		const monthly = {};
-		for (const o of orders) {
-			const d = new Date(o.createdAt || Date.now());
-			const key = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
-			if (!monthly[key]) monthly[key] = { month: key, orders: 0, revenue: 0 };
-			monthly[key].orders += 1;
-			monthly[key].revenue += Number(o.totalAmount||0);
+
+		res.writeHead(200, {
+			'Content-Type': 'application/pdf',
+			'Content-Disposition': `attachment; filename="overview-report-${new Date().toISOString().slice(0,10)}.pdf"`
+		});
+		const doc = new PDFDocument({ size: 'A4', margin: 50 });
+		doc.pipe(res);
+		doc.fontSize(20).text('Business Analytics Overview', { align: 'center' });
+		doc.moveDown();
+		doc.fontSize(12).text(`Generated: ${new Date().toLocaleString()}`);
+		doc.moveDown();
+		doc.fontSize(16).text('Summary');
+		doc.fontSize(12).list([
+			`Users: ${metrics.users.total}`,
+			`Orders: ${metrics.orders.total}`,
+			`Revenue: ${Number(metrics.orders.revenue||0).toFixed(2)}`,
+			`Inquiries: ${metrics.inquiries.total}`,
+			`Stock Items: ${metrics.stockKeys}`
+		]);
+		doc.moveDown();
+		doc.fontSize(16).text('Users by Type');
+		for (const k of Object.keys(metrics.users.byType||{})) {
+			doc.fontSize(12).text(`- ${k}: ${metrics.users.byType[k]}`);
 		}
-		const stockTotals = movements.reduce((acc,m)=>{ const key = `${m.productType}:${m.productId}`; acc[key]=(acc[key]||0)+Number(m.quantityChange||0); return acc; },{});
-		return sendJson(res, 200, { users: { total: users.length, byType }, orders: { total: orders.length, byStatus: orderByStatus, revenue }, inquiries: { total: inquiries.length }, growth: Object.values(monthly), stockKeys: Object.keys(stockTotals).length });
+		doc.moveDown();
+		doc.fontSize(16).text('Orders by Status');
+		for (const k of Object.keys(metrics.orders.byStatus||{})) {
+			doc.fontSize(12).text(`- ${k}: ${metrics.orders.byStatus[k]}`);
+		}
+		doc.moveDown();
+		doc.fontSize(16).text('Monthly Growth (latest 12)');
+		(metrics.growth||[]).slice(0,12).forEach(row => {
+			doc.fontSize(12).text(`- ${row.month}: orders ${row.orders}, revenue ${Number(row.revenue||0).toFixed(2)}`);
+		});
+		doc.end();
+		return;
 	}
 
 	return serveStatic(req, res);

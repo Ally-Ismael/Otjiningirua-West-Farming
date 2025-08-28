@@ -154,7 +154,7 @@
 
 		<div class="card collapse" id="sec-reports">
 			<h2>Reports & Growth</h2>
-			<div id="reportOverview"></div>
+			<p><a class="btn btn-outline-secondary" href="/api/admin/reports/overview">Download Overview PDF</a></p>
 		</div>
 
 		<div class="card collapse" id="sec-activity">
@@ -174,7 +174,7 @@
 
 	<script>
 		async function refresh() {
-			const [rams, beans, users, orders, movements, logs, settings, report, summary] = await Promise.all([
+			const [rams, beans, users, orders, movements, logs, settings, summary] = await Promise.all([
 				fetch('/api/rams').then(r => r.json()),
 				fetch('/api/beans').then(r => r.json()),
 				fetch('/api/admin/users').then(r => r.json()),
@@ -182,7 +182,6 @@
 				fetch('/api/admin/stock/movements').then(r => r.json()),
 				fetch('/api/admin/logs').then(r => r.json()),
 				fetch('/api/admin/settings').then(r => r.json()),
-				fetch('/api/admin/reports/overview').then(r => r.json()),
 				fetch('/api/admin/stock/summary').then(r => r.json())
 			]);
 			const ramsBody = document.querySelector('#ramsTable tbody');
@@ -204,7 +203,6 @@
 			stockBody.innerHTML = summary.map(s=>`<tr><td>${s.type||''}</td><td>${s.productId} - ${s.name||''}</td><td>${s.stock||0}</td></tr>`).join('');
 
 			document.getElementById('settings').textContent = JSON.stringify(settings, null, 2);
-			document.getElementById('reportOverview').innerHTML = `<strong>Users:</strong> ${report.users.total} &nbsp; <strong>Orders:</strong> ${report.orders.total} &nbsp; <strong>Revenue:</strong> ${report.orders.revenue}`;
 			document.getElementById('logsList').innerHTML = logs.slice(0,10).map(l=>`<li class="small">[${l.createdAt}] ${l.action} ${l.entity} (${l.entityId||''})</li>`).join('');
 		}
 
