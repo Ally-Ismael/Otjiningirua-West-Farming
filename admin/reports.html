@@ -21,30 +21,16 @@
 		<p><a href="/admin/dashboard.html">Back to Dashboard</a> | <a href="#" onclick="logout()">Logout</a></p>
 		<div class="grid">
 			<div class="card">
-				<h3>Overview</h3>
-				<pre id="overview"></pre>
+				<h3>Download Overview Report (PDF)</h3>
+				<p>Click the button to generate and download the latest business analytics report.</p>
+				<button onclick="downloadReport()">Download Overview PDF</button>
 			</div>
 			<div class="card">
-				<h3>Users by Type</h3>
-				<pre id="users"></pre>
-			</div>
-			<div class="card">
-				<h3>Orders by Status</h3>
-				<pre id="orders"></pre>
-			</div>
-			<div class="card">
-				<h3>Monthly Growth</h3>
-				<table class="table" id="growthTable">
-					<thead><tr><th>Month</th><th>Orders</th><th>Revenue</th></tr></thead>
-					<tbody></tbody>
-				</table>
-			</div>
-			<div class="card">
-				<h3>Stock Summary</h3>
+				<h3>Stock Summary (JSON)</h3>
 				<pre id="stock"></pre>
 			</div>
 			<div class="card">
-				<h3>Recent Activity</h3>
+				<h3>Recent Activity (JSON)</h3>
 				<pre id="logs"></pre>
 			</div>
 		</div>
@@ -52,18 +38,24 @@
 
 	<script>
 		async function load() {
-			const [report, summary, logs] = await Promise.all([
-				fetch('/api/admin/reports/overview').then(r => r.json()),
+			const [summary, logs] = await Promise.all([
 				fetch('/api/admin/stock/summary').then(r => r.json()),
 				fetch('/api/admin/logs').then(r => r.json())
 			]);
-			document.getElementById('overview').textContent = JSON.stringify({ users: report.users.total, orders: report.orders.total, revenue: report.orders.revenue, inquiries: report.inquiries.total }, null, 2);
-			document.getElementById('users').textContent = JSON.stringify(report.users.byType, null, 2);
-			document.getElementById('orders').textContent = JSON.stringify(report.orders.byStatus, null, 2);
-			const tbody = document.querySelector('#growthTable tbody');
-			tbody.innerHTML = (report.growth||[]).map(r => `<tr><td>${r.month}</td><td>${r.orders}</td><td>${r.revenue.toFixed ? r.revenue.toFixed(2) : r.revenue}</td></tr>`).join('');
 			document.getElementById('stock').textContent = JSON.stringify(summary, null, 2);
 			document.getElementById('logs').textContent = JSON.stringify(logs.slice(-10), null, 2);
+		}
+
+		async function downloadReport(){
+			const resp = await fetch('/api/admin/reports/overview');
+			if(!resp.ok){ alert('Failed to generate report'); return; }
+			const blob = await resp.blob();
+			const url = URL.createObjectURL(blob);
+			const a = document.createElement('a');
+			a.href = url;
+			a.download = 'overview-report.pdf';
+			a.click();
+			URL.revokeObjectURL(url);
 		}
 		load();
 	</script>
