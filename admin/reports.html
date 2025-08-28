@@ -21,52 +21,26 @@
 		<p><a href="/admin/dashboard.html">Back to Dashboard</a> | <a href="#" onclick="logout()">Logout</a></p>
 		<div class="grid">
 			<div class="card">
-				<h3>Overview</h3>
-				<pre id="overview"></pre>
+				<h3>Download Overview Report (PDF)</h3>
+				<p><a href="/api/admin/reports/overview.pdf" download>Download overview-report.pdf</a></p>
 			</div>
 			<div class="card">
-				<h3>Users by Type</h3>
-				<pre id="users"></pre>
+				<h3>Download Stock Summary (PDF)</h3>
+				<p>
+					<a href="/api/admin/reports/stock-summary.pdf" download>All products</a>
+					|
+					<a href="/api/admin/reports/stock-summary.pdf?type=ram" download>Rams only</a>
+					|
+					<a href="/api/admin/reports/stock-summary.pdf?type=bean" download>Beans only</a>
+				</p>
 			</div>
 			<div class="card">
-				<h3>Orders by Status</h3>
-				<pre id="orders"></pre>
-			</div>
-			<div class="card">
-				<h3>Monthly Growth</h3>
-				<table class="table" id="growthTable">
-					<thead><tr><th>Month</th><th>Orders</th><th>Revenue</th></tr></thead>
-					<tbody></tbody>
-				</table>
-			</div>
-			<div class="card">
-				<h3>Stock Summary</h3>
-				<pre id="stock"></pre>
-			</div>
-			<div class="card">
-				<h3>Recent Activity</h3>
-				<pre id="logs"></pre>
+				<h3>Download Activity Logs (PDF)</h3>
+				<p><a href="/api/admin/reports/activity-logs.pdf" download>Download activity-logs.pdf</a></p>
 			</div>
 		</div>
 	</div>
 
-	<script>
-		async function load() {
-			const [report, summary, logs] = await Promise.all([
-				fetch('/api/admin/reports/overview').then(r => r.json()),
-				fetch('/api/admin/stock/summary').then(r => r.json()),
-				fetch('/api/admin/logs').then(r => r.json())
-			]);
-			document.getElementById('overview').textContent = JSON.stringify({ users: report.users.total, orders: report.orders.total, revenue: report.orders.revenue, inquiries: report.inquiries.total }, null, 2);
-			document.getElementById('users').textContent = JSON.stringify(report.users.byType, null, 2);
-			document.getElementById('orders').textContent = JSON.stringify(report.orders.byStatus, null, 2);
-			const tbody = document.querySelector('#growthTable tbody');
-			tbody.innerHTML = (report.growth||[]).map(r => `<tr><td>${r.month}</td><td>${r.orders}</td><td>${r.revenue.toFixed ? r.revenue.toFixed(2) : r.revenue}</td></tr>`).join('');
-			document.getElementById('stock').textContent = JSON.stringify(summary, null, 2);
-			document.getElementById('logs').textContent = JSON.stringify(logs.slice(-10), null, 2);
-		}
-		load();
-	</script>
 	<script>
 		(async function guard(){ const res = await fetch('/api/admin/session'); if (!res.ok) window.location.href = '/admin/login.html'; })();
 		async function logout(){ await fetch('/api/admin/logout', { method: 'POST' }); window.location.href = '/admin/login.html'; }
