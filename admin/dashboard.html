@@ -5,6 +5,7 @@
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<title>Admin - Otjiningirua West</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 	<style>
 		body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial, sans-serif; margin: 20px; }
 		.container { max-width: 900px; margin: 0 auto; }
@@ -24,25 +25,48 @@
 </head>
 <body>
 	<div class="container">
-		<h1>Admin Dashboard</h1>
-		<p><a href="/admin/reports.html">Go to Reports</a> | <a href="#" onclick="logout()">Logout</a></p>
-		<p>Add rams and beans, and upload videos. Data is stored locally.</p>
+		<div class="d-flex align-items-center justify-content-between mb-3">
+			<h1 class="h3 m-0">Admin Dashboard</h1>
+			<div>
+				<a class="btn btn-outline-secondary me-2" href="/admin/reports.html">Reports</a>
+				<button class="btn btn-danger" onclick="logout()">Logout</button>
+			</div>
+		</div>
+		<p class="text-muted">Add rams and beans, upload media, manage users, orders, stock and settings.</p>
 
-		<div class="card">
+		<div class="row g-3 mb-3">
+			<div class="col-12">
+				<div class="list-group list-group-horizontal overflow-auto" id="featureList">
+					<button class="list-group-item list-group-item-action" data-bs-toggle="collapse" data-bs-target="#sec-add-ram">Add Ram</button>
+					<button class="list-group-item list-group-item-action" data-bs-toggle="collapse" data-bs-target="#sec-add-bean">Add Bean</button>
+					<button class="list-group-item list-group-item-action" data-bs-toggle="collapse" data-bs-target="#sec-upload">Upload Media</button>
+					<button class="list-group-item list-group-item-action" data-bs-toggle="collapse" data-bs-target="#sec-rams">Rams</button>
+					<button class="list-group-item list-group-item-action" data-bs-toggle="collapse" data-bs-target="#sec-beans">Beans</button>
+					<button class="list-group-item list-group-item-action" data-bs-toggle="collapse" data-bs-target="#sec-users">Users</button>
+					<button class="list-group-item list-group-item-action" data-bs-toggle="collapse" data-bs-target="#sec-orders">Orders</button>
+					<button class="list-group-item list-group-item-action" data-bs-toggle="collapse" data-bs-target="#sec-stock">Stock</button>
+					<button class="list-group-item list-group-item-action" data-bs-toggle="collapse" data-bs-target="#sec-reports">Reports</button>
+					<button class="list-group-item list-group-item-action" data-bs-toggle="collapse" data-bs-target="#sec-activity">Activity</button>
+					<button class="list-group-item list-group-item-action" data-bs-toggle="collapse" data-bs-target="#sec-settings">Settings</button>
+				</div>
+			</div>
+		</div>
+
+		<div class="card collapse" id="sec-add-ram">
 			<h2>Add Ram</h2>
 			<input id="ramName" placeholder="Name" />
 			<textarea id="ramDesc" placeholder="Description"></textarea>
 			<button onclick="addRam()">Save Ram</button>
 		</div>
 
-		<div class="card">
+		<div class="card collapse" id="sec-add-bean">
 			<h2>Add Bean Product</h2>
 			<input id="beanName" placeholder="Name" />
 			<textarea id="beanDesc" placeholder="Description"></textarea>
 			<button onclick="addBean()">Save Bean</button>
 		</div>
 
-		<div class="card">
+		<div class="card collapse" id="sec-upload">
 			<h2>Upload Video</h2>
 			<select id="parentType">
 				<option value="">Select type</option>
@@ -56,32 +80,40 @@
 			<div id="uploadResult"></div>
 		</div>
 
-		<div class="card">
+		<div class="card collapse" id="sec-rams">
 			<h2>Rams</h2>
-			<table class="table" id="ramsTable"><thead><tr><th>ID</th><th>Name</th><th>Status</th><th>Breed</th><th>Price</th><th>Actions</th></tr></thead><tbody></tbody></table>
+			<div class="table-responsive">
+				<table class="table table-striped" id="ramsTable"><thead><tr><th>ID</th><th>Name</th><th>Status</th><th>Breed</th><th>Price</th><th>Actions</th></tr></thead><tbody></tbody></table>
+			</div>
 		</div>
 
-		<div class="card">
+		<div class="card collapse" id="sec-beans">
 			<h2>Beans</h2>
-			<table class="table" id="beansTable"><thead><tr><th>ID</th><th>Name</th><th>Status</th><th>Variety</th><th>Price/kg</th><th>Actions</th></tr></thead><tbody></tbody></table>
+			<div class="table-responsive">
+				<table class="table table-striped" id="beansTable"><thead><tr><th>ID</th><th>Name</th><th>Status</th><th>Variety</th><th>Price/kg</th><th>Actions</th></tr></thead><tbody></tbody></table>
+			</div>
 		</div>
 
-		<div class="card">
+		<div class="card collapse" id="sec-users">
 			<h2>Users</h2>
 			<div class="grid">
 				<div>
 					<input id="userName" placeholder="Full name" />
 					<input id="userEmail" placeholder="Email" />
+					<input id="userPhone" placeholder="Phone" />
+					<input id="userLocation" placeholder="Location" />
 					<select id="userType"><option value="individual">Individual</option><option value="business">Business</option><option value="admin">Admin</option></select>
 					<button onclick="createUser()">Add User</button>
 				</div>
 				<div>
-					<table class="table" id="usersTable"><thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Type</th><th>Status</th><th>Actions</th></tr></thead><tbody></tbody></table>
+					<div class="table-responsive">
+						<table class="table table-striped" id="usersTable"><thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Phone</th><th>Location</th><th>Type</th><th>Status</th><th>Actions</th></tr></thead><tbody></tbody></table>
+					</div>
 				</div>
 			</div>
 		</div>
 
-		<div class="card">
+		<div class="card collapse" id="sec-orders">
 			<h2>Orders</h2>
 			<div class="grid">
 				<div>
@@ -91,12 +123,14 @@
 					<button onclick="createOrder()">Create Order</button>
 				</div>
 				<div>
-					<table class="table" id="ordersTable"><thead><tr><th>ID</th><th>User</th><th>Status</th><th>Total</th><th>Created</th><th>Actions</th></tr></thead><tbody></tbody></table>
+					<div class="table-responsive">
+						<table class="table table-striped" id="ordersTable"><thead><tr><th>ID</th><th>User</th><th>Status</th><th>Total</th><th>Created</th><th>Actions</th></tr></thead><tbody></tbody></table>
+					</div>
 				</div>
 			</div>
 		</div>
 
-		<div class="card">
+		<div class="card collapse" id="sec-stock">
 			<h2>Stock</h2>
 			<div class="grid">
 				<div>
@@ -107,24 +141,28 @@
 					<button onclick="addMovement()">Add Movement</button>
 				</div>
 				<div>
-					<table class="table" id="movementsTable"><thead><tr><th>ID</th><th>Type</th><th>Product</th><th>Qty</th><th>Note</th><th>Created</th></tr></thead><tbody></tbody></table>
+					<div class="table-responsive">
+						<table class="table table-striped" id="movementsTable"><thead><tr><th>ID</th><th>Type</th><th>Product</th><th>Qty</th><th>Note</th><th>Created</th></tr></thead><tbody></tbody></table>
+					</div>
 					<h3>Summary</h3>
-					<table class="table" id="stockSummaryTable"><thead><tr><th>Type</th><th>Product</th><th>Stock</th></tr></thead><tbody></tbody></table>
+					<div class="table-responsive">
+						<table class="table table-striped" id="stockSummaryTable"><thead><tr><th>Type</th><th>Product</th><th>Stock</th></tr></thead><tbody></tbody></table>
+					</div>
 				</div>
 			</div>
 		</div>
 
-		<div class="card">
+		<div class="card collapse" id="sec-reports">
 			<h2>Reports & Growth</h2>
 			<div id="reportOverview"></div>
 		</div>
 
-		<div class="card">
+		<div class="card collapse" id="sec-activity">
 			<h2>Activity Logs</h2>
 			<ul id="logsList"></ul>
 		</div>
 
-		<div class="card">
+		<div class="card collapse" id="sec-settings">
 			<h2>Settings</h2>
 			<input id="setPhone" placeholder="Phone e.g. +264..." />
 			<input id="setEmail" placeholder="Email" />
@@ -154,7 +192,7 @@
 			beansBody.innerHTML = beans.map(b=>`<tr><td>${b.id}</td><td>${b.name||''}</td><td><span class="badge ${b.status}">${b.status||''}</span></td><td>${b.variety||''}</td><td>${b.pricePerKg||''}</td><td><button onclick="editBean('${b.id}')">Edit</button> <button onclick="deleteBean('${b.id}')">Delete</button></td></tr>`).join('');
 
 			const usersBody = document.querySelector('#usersTable tbody');
-			usersBody.innerHTML = users.map(u=>`<tr><td>${u.id}</td><td>${u.name||''}</td><td>${u.email||''}</td><td>${u.type||''}</td><td>${u.status||''}</td><td><button onclick="deleteUser('${u.id}')">Delete</button></td></tr>`).join('');
+			usersBody.innerHTML = users.map(u=>`<tr><td>${u.id}</td><td>${u.name||''}</td><td>${u.email||''}</td><td>${u.phone||''}</td><td>${u.location||''}</td><td>${u.type||''}</td><td>${u.status||''}</td><td><button class="btn btn-sm btn-outline-danger" onclick="deleteUser('${u.id}')">Delete</button></td></tr>`).join('');
 
 			const ordersBody = document.querySelector('#ordersTable tbody');
 			ordersBody.innerHTML = orders.map(o=>`<tr><td>${o.id}</td><td>${o.userId||''}</td><td>${o.status||''}</td><td>${o.totalAmount||0}</td><td>${o.createdAt||''}</td><td><button onclick="deleteOrder('${o.id}')">Delete</button></td></tr>`).join('');
@@ -167,7 +205,7 @@
 
 			document.getElementById('settings').textContent = JSON.stringify(settings, null, 2);
 			document.getElementById('reportOverview').innerHTML = `<strong>Users:</strong> ${report.users.total} &nbsp; <strong>Orders:</strong> ${report.orders.total} &nbsp; <strong>Revenue:</strong> ${report.orders.revenue}`;
-			document.getElementById('logsList').innerHTML = logs.slice(0,10).map(l=>`<li>[${l.createdAt}] ${l.action} ${l.entity} (${l.entityId||''})</li>`).join('');
+			document.getElementById('logsList').innerHTML = logs.slice(0,10).map(l=>`<li class="small">[${l.createdAt}] ${l.action} ${l.entity} (${l.entityId||''})</li>`).join('');
 		}
 
 		async function addRam() {
@@ -234,11 +272,15 @@
 		async function createUser() {
 			const name = document.getElementById('userName').value.trim();
 			const email = document.getElementById('userEmail').value.trim();
+			const phone = document.getElementById('userPhone').value.trim();
+			const location = document.getElementById('userLocation').value.trim();
 			const type = document.getElementById('userType').value;
 			if (!name) return alert('Name required');
-			await fetch('/api/admin/users', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, email, type }) });
+			await fetch('/api/admin/users', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, email, phone, location, type }) });
 			document.getElementById('userName').value = '';
 			document.getElementById('userEmail').value = '';
+			document.getElementById('userPhone').value = '';
+			document.getElementById('userLocation').value = '';
 			refresh();
 		}
 
@@ -284,5 +326,6 @@
 		})();
 		async function logout(){ await fetch('/api/admin/logout', { method: 'POST' }); window.location.href = '/admin/login.html'; }
 	</script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

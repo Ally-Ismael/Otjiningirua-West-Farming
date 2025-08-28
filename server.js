@@ -350,7 +350,7 @@ const routes = async (req, res) => {
 	if (req.url === '/api/admin/users' && req.method === 'GET') {
 		const db = await getDb();
 		if (db) {
-			const [rows] = await db.query('SELECT id, name, email, phone, user_type AS type, status, created_at AS createdAt, updated_at AS updatedAt FROM users ORDER BY created_at DESC');
+			const [rows] = await db.query('SELECT id, name, email, phone, location, user_type AS type, status, created_at AS createdAt, updated_at AS updatedAt FROM users ORDER BY created_at DESC');
 			return sendJson(res, 200, rows.map(r => ({ ...r, id: String(r.id) })));
 		}
 		return sendJson(res, 200, readJsonFallback('users.json'));
@@ -360,7 +360,7 @@ const routes = async (req, res) => {
 			const body = await parseBody(req);
 			const db = await getDb();
 			if (db) {
-				const [r] = await db.execute('INSERT INTO users (name, email, phone, user_type, status) VALUES (?,?,?,?,?)', [body.name||'', body.email||null, body.phone||null, body.type||'individual', body.status||'active']);
+				const [r] = await db.execute('INSERT INTO users (name, email, phone, location, user_type, status) VALUES (?,?,?,?,?,?)', [body.name||'', body.email||null, body.phone||null, body.location||null, body.type||'individual', body.status||'active']);
 				const user = { id: String(r.insertId), createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(), ...body };
 				logActivity('create', 'user', user.id, user);
 				return sendJson(res, 201, user);
@@ -379,7 +379,7 @@ const routes = async (req, res) => {
 			const body = await parseBody(req);
 			const db = await getDb();
 			if (db) {
-				await db.execute('UPDATE users SET name=COALESCE(?,name), email=COALESCE(?,email), phone=COALESCE(?,phone), user_type=COALESCE(?,user_type), status=COALESCE(?,status) WHERE id=?', [body.name, body.email, body.phone, body.type, body.status, id]);
+				await db.execute('UPDATE users SET name=COALESCE(?,name), email=COALESCE(?,email), phone=COALESCE(?,phone), location=COALESCE(?,location), user_type=COALESCE(?,user_type), status=COALESCE(?,status) WHERE id=?', [body.name, body.email, body.phone, body.location, body.type, body.status, id]);
 				logActivity('update', 'user', id, body);
 				return sendJson(res, 200, { ok: true });
 			}

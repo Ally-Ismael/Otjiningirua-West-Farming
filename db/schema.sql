@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `name` VARCHAR(191) NOT NULL,
   `email` VARCHAR(191) DEFAULT NULL,
   `phone` VARCHAR(64) DEFAULT NULL,
+  `location` VARCHAR(191) DEFAULT NULL,
   `user_type` ENUM('individual','business','admin') NOT NULL DEFAULT 'individual',
   `status` ENUM('active','inactive') NOT NULL DEFAULT 'active',
   `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
