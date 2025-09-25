@@ -1,0 +1,18 @@
+[
+  {
+    "id": "1756161273242",
+    "createdAt": "2025-08-25T22:34:33.242Z",
+    "actor": "admin",
+    "action": "create",
+    "entity": "user",
+    "entityId": "1756161273241",
+    "details": {
+      "id": "1756161273241",
+      "createdAt": "2025-08-25T22:34:33.241Z",
+      "updatedAt": "2025-08-25T22:34:33.241Z",
+      "name": "Owner",
+      "email": "info@otjiningirua.com",
+      "type": "admin"
+    }
+  }
+]

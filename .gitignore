@@ -1,0 +1,80 @@
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.production
+
+# Logs
+logs
+*.log
+
+# Temporary files
+tmp/
+temp/
+
+# Build artifacts
+dist/
+build/
+
+# Uploads (local development only - Railway will use volumes)
+/uploads/*.mp4
+/uploads/*.mov
+/uploads/*.avi
+/uploads/*.jpeg
+/uploads/*.jpg
+/uploads/*.png
+/uploads/*.gif
+
+# Keep upload folder structure but ignore files
+/uploads/!.gitkeep
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Deployment artifacts
+ow-farm-deployment/
+ow-farm-deployment.zip
+*.zip
+
+# Database backups
+*.sql.backup
+*.db
+
+# Testing
+coverage/
+.nyc_output
+
+# Development files
+TODO.md
+WARP.md
+DEPLOYMENT_GUIDE.md
+create_deployment.ps1
+sample.txt
+database_setup.sql

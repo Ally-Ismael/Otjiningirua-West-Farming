@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - Otjiningirua West Farming</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <style>
+        .contact-hero {
+            background: linear-gradient(rgba(44, 85, 48, 0.9), rgba(44, 85, 48, 0.9)), 
+                        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><rect fill="%234a7c59" width="1200" height="600"/><circle fill="%235d8a6a" cx="200" cy="150" r="80" opacity="0.3"/><circle fill="%236b9477" cx="800" cy="300" r="120" opacity="0.2"/></svg>');
+            color: white;
+            text-align: center;
+            padding: 3rem 0;
+        }
+        .contact-methods {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+        .contact-method {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        .contact-method:hover {
+            transform: translateY(-5px);
+        }
+        .contact-method .icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        .contact-method h3 {
+            color: #2c5530;
+            margin-bottom: 1rem;
+        }
+        .contact-method a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .inquiry-form {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin: 2rem 0;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+        .success-alert {
+            background: #d4edda;
+            color: #155724;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+        .error-alert {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="container">
+            <div class="logo">🐑 Otjiningirua West Farming</div>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/rams.html">Rams</a></li>
+                <li><a href="/beans.html">Beans</a></li>
+                <li><a href="/contact.html">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div class="contact-hero">
+            <div class="container">
+                <h1>Get in Touch</h1>
+                <p>Ready to buy quality rams or beans? Contact us today!</p>
+            </div>
+        </div>
+
+        <div class="container" style="padding: 2rem 0;">
+            <div class="contact-methods">
+                <div class="contact-method">
+                    <div class="icon">📞</div>
+                    <h3>Call Us</h3>
+                    <p>Speak directly with our team</p>
+                    <a href="tel:+264811220667">+264 81 122 0667</a>
+                </div>
+
+                <div class="contact-method">
+                    <div class="icon">💬</div>
+                    <h3>WhatsApp</h3>
+                    <p>Quick and easy messaging</p>
+                    <a href="https://wa.me/264811220667" target="_blank">Chat on WhatsApp</a>
+                </div>
+
+                <div class="contact-method">
+                    <div class="icon">📧</div>
+                    <h3>Email</h3>
+                    <p>Send us your inquiries</p>
+                    <a href="mailto:info@otjiningirua-west.com">info@otjiningirua-west.com</a>
+                </div>
+
+                <div class="contact-method">
+                    <div class="icon">📍</div>
+                    <h3>Location</h3>
+                    <p>Visit our farm</p>
+                    <p>Otjiningirua West<br>Namibia</p>
+                </div>
+            </div>
+
+            <div class="inquiry-form">
+                <h2>Send Us an Inquiry</h2>
+                <p>Fill out the form below and we'll get back to you within 24 hours.</p>
+                
+                <div id="successAlert" class="success-alert"></div>
+                <div id="errorAlert" class="error-alert"></div>
+
+                <form id="inquiryForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="name">Full Name *</label>
+                            <input type="text" id="name" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email Address *</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="phone">Phone Number</label>
+                            <input type="tel" id="phone" name="phone">
+                        </div>
+                        <div class="form-group">
+                            <label for="product">Interested In *</label>
+                            <select id="product" name="product" required>
+                                <option value="">Select Product</option>
+                                <option value="rams">Rams</option>
+                                <option value="beans">Beans</option>
+                                <option value="both">Both Rams & Beans</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="quantity">Quantity Needed</label>
+                        <input type="text" id="quantity" name="quantity" placeholder="e.g., 5 rams, 100kg beans">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="message">Message *</label>
+                        <textarea id="message" name="message" rows="5" required placeholder="Tell us about your requirements, delivery location, etc."></textarea>
+                    </div>
+
+                    <button type="submit" class="submit-btn">Send Inquiry</button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <!-- Floating WhatsApp Button -->
+    <a class="whatsapp-float" href="https://wa.me/264811220667" target="_blank" aria-label="Chat on WhatsApp">
+        <svg viewBox="0 0 32 32"><path d="M19.11 17.44c-.28-.14-1.62-.8-1.87-.89-.25-.09-.43-.14-.62.14-.18.28-.71.89-.87 1.07-.16.18-.32.2-.6.07-.28-.14-1.2-.44-2.29-1.41-.85-.76-1.43-1.7-1.6-1.98-.16-.28-.02-.43.12-.57.12-.12.28-.32.41-.48.14-.16.18-.28.28-.46.09-.18.05-.34-.02-.48-.07-.14-.62-1.49-.85-2.04-.22-.53-.44-.46-.62-.46-.16-.01-.34-.01-.52-.01s-.48.07-.74.34c-.25.28-.98.96-.98 2.33s1.01 2.7 1.15 2.89c.14.18 1.98 3.03 4.8 4.25.67.29 1.2.46 1.61.59.68.22 1.3.19 1.79.12.55-.08 1.62-.66 1.85-1.3.23-.64.23-1.19.16-1.3-.07-.11-.25-.18-.53-.32zM16.01 3.2c-7.06 0-12.8 5.72-12.8 12.77 0 2.26.6 4.39 1.66 6.23L3.2 28.8l6.78-1.78a12.76 12.76 0 006.03 1.53c7.06 0 12.8-5.73 12.8-12.78 0-7.05-5.74-12.77-12.8-12.77zm0 23.15a10.3 10.3 0 01-5.25-1.43l-.38-.23-4.02 1.06 1.07-3.92-.25-.4a10.28 10.28 0 01-1.58-5.5c0-5.68 4.62-10.28 10.3-10.28s10.3 4.6 10.3 10.28-4.62 10.42-10.3 10.42z"/></svg>
+    </a>
+
+    <script>
+        document.getElementById('inquiryForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const data = Object.fromEntries(formData);
+            
+            try {
+                const response = await fetch('/api/inquiries', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const successAlert = document.getElementById('successAlert');
+                const errorAlert = document.getElementById('errorAlert');
+                
+                if (response.ok) {
+                    successAlert.textContent = 'Thank you! Your inquiry has been sent successfully. We will contact you within 24 hours.';
+                    successAlert.style.display = 'block';
+                    errorAlert.style.display = 'none';
+                    this.reset();
+                    
+                    // Auto-hide success message after 5 seconds
+                    setTimeout(() => {
+                        successAlert.style.display = 'none';
+                    }, 5000);
+                } else {
+                    throw new Error('Failed to send inquiry');
+                }
+            } catch (error) {
+                const errorAlert = document.getElementById('errorAlert');
+                const successAlert = document.getElementById('successAlert');
+                errorAlert.textContent = 'Sorry, there was an error sending your inquiry. Please try again or contact us directly.';
+                errorAlert.style.display = 'block';
+                successAlert.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

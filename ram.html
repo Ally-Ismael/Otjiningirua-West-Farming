@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Ram Detail - Otjiningirua West</title>
+	<link rel="stylesheet" href="/css/styles.css">
+	<style>
+		.wrapper { display:grid; grid-template-columns: 1fr; gap: 16px; }
+		@media(min-width:900px){ .wrapper{ grid-template-columns: 1.2fr 1fr; } }
+		.card { background:#fff; border-radius:12px; padding:16px; box-shadow:0 10px 30px rgba(0,0,0,0.08); border:2px solid #eee; }
+		.gallery { display:grid; grid-template-columns: repeat(auto-fit,minmax(160px,1fr)); gap:10px; }
+		.gallery img, .gallery video { width:100%; border-radius:8px; }
+		.field { margin: 8px 0; }
+		.label { color:#2c5530; font-weight:600; }
+		.badge { display:inline-block; padding:4px 10px; border-radius:999px; font-size:12px; font-weight:600; }
+		.badge.available { background:#e8f5e9; color:#2e7d32; }
+		.badge.reserved { background:#fff8e1; color:#ff8f00; }
+		.badge.sold { background:#ffebee; color:#c62828; }
+		.actions { display:grid; grid-template-columns: repeat(3,1fr); gap:10px; margin-top:12px; }
+	</style>
+</head>
+<body>
+	<header>
+		<nav class="container">
+			<div class="logo">🐑 Otjiningirua West Farming</div>
+			<ul class="nav-links">
+				<li><a href="/">Home</a></li>
+				<li><a href="/rams.html">Rams</a></li>
+				<li><a href="/beans.html">Beans</a></li>
+			</ul>
+		</nav>
+	</header>
+	<main class="container" style="padding:24px;">
+		<div id="content" class="wrapper"></div>
+	</main>
+	<script>
+		const CALL_NO = '+264811220667';
+		const WA_NO = '264811220667';
+		function q(k){ return new URLSearchParams(location.search).get(k); }
+		function statusClass(s){ return s==='available'?'available':s==='reserved'?'reserved':'sold'; }
+		function mediaBlocks(m){
+			return (m||[]).map(x=> x.type==='video' ? `<video controls src="${x.url}"></video>` : `<img src="${x.url}" alt="media">`).join('');
+		}
+		async function load(){
+			const id = q('id');
+			const rams = await fetch('/api/rams').then(r=>r.json());
+			const r = rams.find(x=> String(x.id)===String(id));
+			if(!r){ document.getElementById('content').innerHTML = '<p>Not found.</p>'; return; }
+			document.title = `${r.name||'Ram'} - Otjiningirua West`;
+			document.getElementById('content').innerHTML = `
+				<div class="card">
+					<h1 style="margin-bottom:8px;">${r.name||'Ram'}</h1>
+					<div class="badge ${statusClass(r.status)}">${(r.status||'available').toUpperCase()}</div>
+					<div class="field"><span class="label">Breed:</span> ${r.breed||'-'}</div>
+					<div class="field"><span class="label">Born:</span> ${r.bornDate||'-'}</div>
+					<div class="field"><span class="label">Weight:</span> ${r.weightKg? (r.weightKg+' kg'):'-'}</div>
+					<div class="field"><span class="label">Color:</span> ${r.color||'-'}</div>
+					<div class="field"><span class="label">Health Status:</span> ${r.healthStatus||'-'}</div>
+					<div class="field"><span class="label">Bloodline:</span> ${r.bloodline||'-'}</div>
+					<div class="field"><span class="label">Price:</span> ${r.price?('N$ '+r.price):'-'}</div>
+					<div class="field"><span class="label">Description:</span> ${r.description||'-'}</div>
+					<h3 style="margin-top:12px;">Media Gallery</h3>
+					<div class="gallery">${mediaBlocks(r.media)}</div>
+					<div class="actions">
+						<a class="cta-button" href="#" onclick="openBooking('${encodeURIComponent(r.name||r.id)}'); return false;">Book</a>
+						<a class="cta-button" href="tel:${CALL_NO}">Call Now</a>
+						<a class="cta-button" target="_blank" href="https://wa.me/${WA_NO}?text=${encodeURIComponent('Hi, I am interested in Ram '+(r.name||r.id))}">WhatsApp</a>
+					</div>
+				</div>
+			`;
+		}
+		function openBooking(name){
+			const msg = `I'd like to book Ram ${decodeURIComponent(name)}.`;
+			window.location.href = `mailto:info@otjiningirua.com?subject=Booking%20Request&body=${encodeURIComponent(msg)}`;
+		}
+		load();
+	</script>
+    <a class="whatsapp-float" href="https://wa.me/264811220667" target="_blank" aria-label="Chat on WhatsApp" title="Chat on WhatsApp">
+		<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M19.11 17.44c-.28-.14-1.62-.8-1.87-.89-.25-.09-.43-.14-.62.14-.18.28-.71.89-.87 1.07-.16.18-.32.2-.6.07-.28-.14-1.2-.44-2.29-1.41-.85-.76-1.43-1.7-1.6-1.98-.16-.28-.02-.43.12-.57.12-.12.28-.32.41-.48.14-.16.18-.28.28-.46.09-.18.05-.34-.02-.48-.07-.14-.62-1.49-.85-2.04-.22-.53-.44-.46-.62-.46-.16-.01-.34-.01-.52-.01s-.48.07-.74.34c-.25.28-.98.96-.98 2.33s1.01 2.7 1.15 2.89c.14.18 1.98 3.03 4.8 4.25.67.29 1.2.46 1.61.59.68.22 1.3.19 1.79.12.55-.08 1.62-.66 1.85-1.3.23-.64.23-1.19.16-1.3-.07-.11-.25-.18-.53-.32zM16.01 3.2c-7.06 0-12.8 5.72-12.8 12.77 0 2.26.6 4.39 1.66 6.23L3.2 28.8l6.78-1.78a12.76 12.76 0 006.03 1.53c7.06 0 12.8-5.73 12.8-12.78 0-7.05-5.74-12.77-12.8-12.77zm0 23.15a10.3 10.3 0 01-5.25-1.43l-.38-.23-4.02 1.06 1.07-3.92-.25-.4a10.28 10.28 0 01-1.58-5.5c0-5.68 4.62-10.28 10.3-10.28s10.3 4.6 10.3 10.28-4.62 10.42-10.3 10.42z"/></svg>
+	</a>
+</body>
+<footer>
+	<div class="container" style="padding:16px 20px;">
+		<div style="display:flex; flex-direction:column; gap:6px; align-items:flex-start;">
+			<p style="margin:0; font-weight:600;">📞 CONTACT US TODAY!</p>
+			<p style="margin:0;">Ehrenfried: 081 122 0667</p>
+			<p style="margin:0;">Ingrid: 081 446 4081</p>
+			<p style="margin:0;">Undji: 081 661 4972</p>
+		</div>
+	</div>
+</footer>
+</html>
+

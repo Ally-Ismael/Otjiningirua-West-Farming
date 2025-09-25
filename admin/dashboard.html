@@ -1,0 +1,331 @@
+""  
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Admin - Otjiningirua West</title>
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+	<style>
+		body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial, sans-serif; margin: 20px; }
+		.container { max-width: 900px; margin: 0 auto; }
+		.card { border: 1px solid #ddd; border-radius: 8px; padding: 16px; margin-bottom: 16px; }
+		input, textarea, select { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; margin: 8px 0; }
+		button { background: #2c5530; color: #fff; border: 0; padding: 10px 16px; border-radius: 6px; cursor: pointer; }
+		button:disabled { background: #9bb29e; }
+		.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
+		.table { width: 100%; border-collapse: collapse; font-size: 14px; }
+		.table th, .table td { border: 1px solid #e5e7eb; padding: 8px; text-align: left; }
+		.table th { background: #f3f4f6; }
+		.badge { display: inline-block; padding: 3px 8px; border-radius: 999px; font-size: 12px; }
+		.badge.available { background: #e8f5e9; color: #2e7d32; }
+		.badge.reserved { background: #fff8e1; color: #ff8f00; }
+		.badge.sold { background: #ffebee; color: #c62828; }
+	</style>
+</head>
+<body>
+	<div class="container">
+		<div class="d-flex align-items-center justify-content-between mb-3">
+			<h1 class="h3 m-0">Admin Dashboard</h1>
+			<div>
+				<a class="btn btn-outline-secondary me-2" href="/admin/reports.html">Reports</a>
+				<button class="btn btn-danger" onclick="logout()">Logout</button>
+			</div>
+		</div>
+		<p class="text-muted">Add rams and beans, upload media, manage users, orders, stock and settings.</p>
+
+		<div class="row g-3 mb-3">
+			<div class="col-12">
+				<div class="list-group list-group-horizontal overflow-auto" id="featureList">
+					<button class="list-group-item list-group-item-action" data-bs-toggle="collapse" data-bs-target="#sec-add-ram">Add Ram</button>
+					<button class="list-group-item list-group-item-action" data-bs-toggle="collapse" data-bs-target="#sec-add-bean">Add Bean</button>
+					<button class="list-group-item list-group-item-action" data-bs-toggle="collapse" data-bs-target="#sec-upload">Upload Media</button>
+					<button class="list-group-item list-group-item-action" data-bs-toggle="collapse" data-bs-target="#sec-rams">Rams</button>
+					<button class="list-group-item list-group-item-action" data-bs-toggle="collapse" data-bs-target="#sec-beans">Beans</button>
+					<button class="list-group-item list-group-item-action" data-bs-toggle="collapse" data-bs-target="#sec-users">Users</button>
+					<button class="list-group-item list-group-item-action" data-bs-toggle="collapse" data-bs-target="#sec-orders">Orders</button>
+					<button class="list-group-item list-group-item-action" data-bs-toggle="collapse" data-bs-target="#sec-stock">Stock</button>
+					<button class="list-group-item list-group-item-action" data-bs-toggle="collapse" data-bs-target="#sec-reports">Reports</button>
+					<button class="list-group-item list-group-item-action" data-bs-toggle="collapse" data-bs-target="#sec-activity">Activity</button>
+					<button class="list-group-item list-group-item-action" data-bs-toggle="collapse" data-bs-target="#sec-settings">Settings</button>
+				</div>
+			</div>
+		</div>
+
+		<div class="card collapse" id="sec-add-ram">
+			<h2>Add Ram</h2>
+			<input id="ramName" placeholder="Name" />
+			<textarea id="ramDesc" placeholder="Description"></textarea>
+			<button onclick="addRam()">Save Ram</button>
+		</div>
+
+		<div class="card collapse" id="sec-add-bean">
+			<h2>Add Bean Product</h2>
+			<input id="beanName" placeholder="Name" />
+			<textarea id="beanDesc" placeholder="Description"></textarea>
+			<button onclick="addBean()">Save Bean</button>
+		</div>
+
+		<div class="card collapse" id="sec-upload">
+			<h2>Upload Video</h2>
+			<select id="parentType">
+				<option value="">Select type</option>
+				<option value="ram">Ram</option>
+				<option value="bean">Bean</option>
+			</select>
+			<input id="parentId" placeholder="Parent ID" />
+			<select id="mediaType"><option value="image">Image</option><option value="video" selected>Video</option></select>
+			<input type="file" id="videoFile" accept="image/*,video/*" />
+			<button onclick="uploadVideo()">Upload</button>
+			<div id="uploadResult"></div>
+		</div>
+
+		<div class="card collapse" id="sec-rams">
+			<h2>Rams</h2>
+			<div class="table-responsive">
+				<table class="table table-striped" id="ramsTable"><thead><tr><th>ID</th><th>Name</th><th>Status</th><th>Breed</th><th>Price</th><th>Actions</th></tr></thead><tbody></tbody></table>
+			</div>
+		</div>
+
+		<div class="card collapse" id="sec-beans">
+			<h2>Beans</h2>
+			<div class="table-responsive">
+				<table class="table table-striped" id="beansTable"><thead><tr><th>ID</th><th>Name</th><th>Status</th><th>Variety</th><th>Price/kg</th><th>Actions</th></tr></thead><tbody></tbody></table>
+			</div>
+		</div>
+
+		<div class="card collapse" id="sec-users">
+			<h2>Users</h2>
+			<div class="grid">
+				<div>
+					<input id="userName" placeholder="Full name" />
+					<input id="userEmail" placeholder="Email" />
+					<input id="userPhone" placeholder="Phone" />
+					<input id="userLocation" placeholder="Location" />
+					<select id="userType"><option value="individual">Individual</option><option value="business">Business</option><option value="admin">Admin</option></select>
+					<button onclick="createUser()">Add User</button>
+				</div>
+				<div>
+					<div class="table-responsive">
+						<table class="table table-striped" id="usersTable"><thead><tr><th>ID</th><th>Name</th><th>Email</th><th>Phone</th><th>Location</th><th>Type</th><th>Status</th><th>Actions</th></tr></thead><tbody></tbody></table>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="card collapse" id="sec-orders">
+			<h2>Orders</h2>
+			<div class="grid">
+				<div>
+					<input id="orderUserId" placeholder="User ID" />
+					<input id="orderTotal" placeholder="Total Amount" />
+					<select id="orderStatus"><option value="pending">pending</option><option value="paid">paid</option><option value="shipped">shipped</option><option value="cancelled">cancelled</option></select>
+					<button onclick="createOrder()">Create Order</button>
+				</div>
+				<div>
+					<div class="table-responsive">
+						<table class="table table-striped" id="ordersTable"><thead><tr><th>ID</th><th>User</th><th>Status</th><th>Total</th><th>Created</th><th>Actions</th></tr></thead><tbody></tbody></table>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="card collapse" id="sec-stock">
+			<h2>Stock</h2>
+			<div class="grid">
+				<div>
+					<select id="stockType"><option value="ram">Ram</option><option value="bean">Bean</option></select>
+					<input id="stockProductId" placeholder="Product ID" />
+					<input id="stockQty" placeholder="Quantity Change (e.g., 5 or -2)" />
+					<input id="stockNote" placeholder="Note" />
+					<button onclick="addMovement()">Add Movement</button>
+				</div>
+				<div>
+					<div class="table-responsive">
+						<table class="table table-striped" id="movementsTable"><thead><tr><th>ID</th><th>Type</th><th>Product</th><th>Qty</th><th>Note</th><th>Created</th></tr></thead><tbody></tbody></table>
+					</div>
+					<h3>Summary</h3>
+					<div class="table-responsive">
+						<table class="table table-striped" id="stockSummaryTable"><thead><tr><th>Type</th><th>Product</th><th>Stock</th></tr></thead><tbody></tbody></table>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="card collapse" id="sec-reports">
+			<h2>Reports & Growth</h2>
+			<div id="reportOverview"></div>
+		</div>
+
+		<div class="card collapse" id="sec-activity">
+			<h2>Activity Logs</h2>
+			<ul id="logsList"></ul>
+		</div>
+
+		<div class="card collapse" id="sec-settings">
+			<h2>Settings</h2>
+			<input id="setPhone" placeholder="Phone e.g. +264..." />
+			<input id="setEmail" placeholder="Email" />
+			<input id="setLocation" placeholder="Location" />
+			<button onclick="saveSettings()">Save Settings</button>
+			<pre id="settings"></pre>
+		</div>
+	</div>
+
+	<script>
+		async function refresh() {
+			const [rams, beans, users, orders, movements, logs, settings, report, summary] = await Promise.all([
+				fetch('/api/rams').then(r => r.json()),
+				fetch('/api/beans').then(r => r.json()),
+				fetch('/api/admin/users').then(r => r.json()),
+				fetch('/api/admin/orders').then(r => r.json()),
+				fetch('/api/admin/stock/movements').then(r => r.json()),
+				fetch('/api/admin/logs').then(r => r.json()),
+				fetch('/api/admin/settings').then(r => r.json()),
+				fetch('/api/admin/reports/overview').then(r => r.json()),
+				fetch('/api/admin/stock/summary').then(r => r.json())
+			]);
+			const ramsBody = document.querySelector('#ramsTable tbody');
+			ramsBody.innerHTML = rams.map(r=>`<tr><td>${r.id}</td><td>${r.name||''}</td><td><span class="badge ${r.status}">${r.status||''}</span></td><td>${r.breed||''}</td><td>${r.price||''}</td><td><button onclick="editRam('${r.id}')">Edit</button> <button onclick="deleteRam('${r.id}')">Delete</button></td></tr>`).join('');
+
+			const beansBody = document.querySelector('#beansTable tbody');
+			beansBody.innerHTML = beans.map(b=>`<tr><td>${b.id}</td><td>${b.name||''}</td><td><span class="badge ${b.status}">${b.status||''}</span></td><td>${b.variety||''}</td><td>${b.pricePerKg||''}</td><td><button onclick="editBean('${b.id}')">Edit</button> <button onclick="deleteBean('${b.id}')">Delete</button></td></tr>`).join('');
+
+			const usersBody = document.querySelector('#usersTable tbody');
+			usersBody.innerHTML = users.map(u=>`<tr><td>${u.id}</td><td>${u.name||''}</td><td>${u.email||''}</td><td>${u.phone||''}</td><td>${u.location||''}</td><td>${u.type||''}</td><td>${u.status||''}</td><td><button class="btn btn-sm btn-outline-danger" onclick="deleteUser('${u.id}')">Delete</button></td></tr>`).join('');
+
+			const ordersBody = document.querySelector('#ordersTable tbody');
+			ordersBody.innerHTML = orders.map(o=>`<tr><td>${o.id}</td><td>${o.userId||''}</td><td>${o.status||''}</td><td>${o.totalAmount||0}</td><td>${o.createdAt||''}</td><td><button onclick="deleteOrder('${o.id}')">Delete</button></td></tr>`).join('');
+
+			const movementsBody = document.querySelector('#movementsTable tbody');
+			movementsBody.innerHTML = movements.map(m=>`<tr><td>${m.id}</td><td>${m.productType}</td><td>${m.productId}</td><td>${m.quantityChange}</td><td>${m.note||''}</td><td>${m.createdAt}</td></tr>`).join('');
+
+			const stockBody = document.querySelector('#stockSummaryTable tbody');
+			stockBody.innerHTML = summary.map(s=>`<tr><td>${s.type||''}</td><td>${s.productId} - ${s.name||''}</td><td>${s.stock||0}</td></tr>`).join('');
+
+			document.getElementById('settings').textContent = JSON.stringify(settings, null, 2);
+			document.getElementById('reportOverview').innerHTML = `<strong>Users:</strong> ${report.users.total} &nbsp; <strong>Orders:</strong> ${report.orders.total} &nbsp; <strong>Revenue:</strong> ${report.orders.revenue}`;
+			document.getElementById('logsList').innerHTML = logs.slice(0,10).map(l=>`<li class="small">[${l.createdAt}] ${l.action} ${l.entity} (${l.entityId||''})</li>`).join('');
+		}
+
+		async function addRam() {
+			const name = document.getElementById('ramName').value.trim();
+			const description = document.getElementById('ramDesc').value.trim();
+			if (!name) return alert('Name required');
+			await fetch('/api/admin/rams', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, description }) });
+			document.getElementById('ramName').value = '';
+			document.getElementById('ramDesc').value = '';
+			refresh();
+		}
+
+		async function addBean() {
+			const name = document.getElementById('beanName').value.trim();
+			const description = document.getElementById('beanDesc').value.trim();
+			if (!name) return alert('Name required');
+			await fetch('/api/admin/beans', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, description }) });
+			document.getElementById('beanName').value = '';
+			document.getElementById('beanDesc').value = '';
+			refresh();
+		}
+
+		async function editRam(id){
+			const name = prompt('Name');
+			const status = prompt('Status (available/reserved/sold)');
+			await fetch(`/api/admin/rams/${id}`, { method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ name: name||undefined, status: status||undefined }) });
+			refresh();
+		}
+		async function deleteRam(id){ if(!confirm('Delete ram?')) return; await fetch(`/api/admin/rams/${id}`, { method:'DELETE' }); refresh(); }
+
+		async function editBean(id){
+			const name = prompt('Name');
+			const status = prompt('Status (available/out_of_stock/discontinued)');
+			await fetch(`/api/admin/beans/${id}`, { method:'PUT', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ name: name||undefined, status: status||undefined }) });
+			refresh();
+		}
+		async function deleteBean(id){ if(!confirm('Delete bean?')) return; await fetch(`/api/admin/beans/${id}`, { method:'DELETE' }); refresh(); }
+
+		async function deleteUser(id){ if(!confirm('Delete user?')) return; await fetch(`/api/admin/users/${id}`, { method:'DELETE' }); refresh(); }
+		async function deleteOrder(id){ if(!confirm('Delete order?')) return; await fetch(`/api/admin/orders/${id}`, { method:'DELETE' }); refresh(); }
+
+		function fileToBase64(file) {
+			return new Promise((resolve, reject) => {
+				const reader = new FileReader();
+				reader.onload = () => resolve(reader.result.split(',')[1]);
+				reader.onerror = reject;
+				reader.readAsDataURL(file);
+			});
+		}
+
+		async function uploadVideo() {
+			const parentType = document.getElementById('parentType').value;
+			const parentId = document.getElementById('parentId').value.trim();
+			const file = document.getElementById('videoFile').files[0];
+			const mediaType = document.getElementById('mediaType').value;
+			if (!parentType || !parentId || !file) return alert('All fields required');
+			const base64 = await fileToBase64(file);
+			const resp = await fetch('/api/admin/upload', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ parentType, parentId, base64, filename: file.name, mediaType }) });
+			const data = await resp.json();
+			document.getElementById('uploadResult').textContent = JSON.stringify(data, null, 2);
+			refresh();
+		}
+
+		async function createUser() {
+			const name = document.getElementById('userName').value.trim();
+			const email = document.getElementById('userEmail').value.trim();
+			const phone = document.getElementById('userPhone').value.trim();
+			const location = document.getElementById('userLocation').value.trim();
+			const type = document.getElementById('userType').value;
+			if (!name) return alert('Name required');
+			await fetch('/api/admin/users', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, email, phone, location, type }) });
+			document.getElementById('userName').value = '';
+			document.getElementById('userEmail').value = '';
+			document.getElementById('userPhone').value = '';
+			document.getElementById('userLocation').value = '';
+			refresh();
+		}
+
+		async function createOrder() {
+			const userId = document.getElementById('orderUserId').value.trim();
+			const totalAmount = parseFloat(document.getElementById('orderTotal').value || '0');
+			const status = document.getElementById('orderStatus').value;
+			if (!userId) return alert('User ID required');
+			await fetch('/api/admin/orders', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ userId, totalAmount, status }) });
+			document.getElementById('orderUserId').value = '';
+			document.getElementById('orderTotal').value = '';
+			refresh();
+		}
+
+		async function addMovement() {
+			const productType = document.getElementById('stockType').value;
+			const productId = document.getElementById('stockProductId').value.trim();
+			const quantityChange = parseFloat(document.getElementById('stockQty').value || '0');
+			const note = document.getElementById('stockNote').value.trim();
+			if (!productId || !quantityChange) return alert('Product ID and quantity needed');
+			await fetch('/api/admin/stock/movements', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ productType, productId, quantityChange, note }) });
+			document.getElementById('stockProductId').value = '';
+			document.getElementById('stockQty').value = '';
+			document.getElementById('stockNote').value = '';
+			refresh();
+		}
+
+		async function saveSettings() {
+			const phone = document.getElementById('setPhone').value.trim();
+			const email = document.getElementById('setEmail').value.trim();
+			const location = document.getElementById('setLocation').value.trim();
+			await fetch('/api/admin/settings', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ phone, email, location }) });
+			refresh();
+		}
+
+		refresh();
+	</script>
+
+	<script>
+		(async function guard(){
+			const res = await fetch('/api/admin/session');
+			if (!res.ok) window.location.href = '/admin/login.html';
+		})();
+		async function logout(){ await fetch('/api/admin/logout', { method: 'POST' }); window.location.href = '/admin/login.html'; }
+	</script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

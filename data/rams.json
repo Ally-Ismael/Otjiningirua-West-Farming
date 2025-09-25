@@ -1,0 +1,744 @@
+[
+  {
+    "id": "2",
+    "name": "Lot 2",
+    "status": "available",
+    "bornDate": "Nov 2022",
+    "weightKg": null,
+    "color": "Light Brown",
+    "healthStatus": "Excellent",
+    "bloodline": "Premium",
+    "media": [
+      {
+        "type": "image",
+        "url": "/uploads/lot2.jpeg"
+      },
+      {
+        "type": "image",
+        "url": "/uploads/lot2full.jpeg"
+      },
+      {
+        "type": "video",
+        "url": "/uploads/lot2video.mp4"
+      }
+    ],
+    "createdAt": "2025-09-16T05:29:21.081Z"
+  },
+  {
+    "id": "5",
+    "name": "Lot 5",
+    "status": "available",
+    "bornDate": "Dec 2022",
+    "weightKg": null,
+    "color": "Dark Brown",
+    "healthStatus": "Excellent",
+    "bloodline": "Premium",
+    "media": [
+      {
+        "type": "image",
+        "url": "/uploads/lot5.jpeg"
+      },
+      {
+        "type": "image",
+        "url": "/uploads/lot5full.jpeg"
+      },
+      {
+        "type": "video",
+        "url": "/uploads/lot5.mp4"
+      }
+    ],
+    "createdAt": "2025-09-16T05:29:21.082Z"
+  },
+  {
+    "id": "6",
+    "name": "Lot 6",
+    "status": "available",
+    "bornDate": "Jan 2023",
+    "weightKg": null,
+    "color": "White",
+    "healthStatus": "Excellent",
+    "bloodline": "Premium",
+    "media": [
+      {
+        "type": "image",
+        "url": "/uploads/lot6.jpeg"
+      },
+      {
+        "type": "image",
+        "url": "/uploads/lot6full.jpeg"
+      },
+      {
+        "type": "video",
+        "url": "/uploads/lot6.mp4"
+      }
+    ],
+    "createdAt": "2025-09-16T05:29:21.082Z"
+  },
+  {
+    "id": "7",
+    "name": "Lot 7",
+    "status": "available",
+    "bornDate": "Nov 2022",
+    "weightKg": null,
+    "color": "Light Brown",
+    "healthStatus": "Excellent",
+    "bloodline": "Premium",
+    "media": [
+      {
+        "type": "image",
+        "url": "/uploads/lot7.jpeg"
+      },
+      {
+        "type": "image",
+        "url": "/uploads/lot7full.jpeg"
+      },
+      {
+        "type": "video",
+        "url": "/uploads/Lot%207.mp4"
+      }
+    ],
+    "createdAt": "2025-09-16T05:29:21.082Z"
+  },
+  {
+    "id": "12",
+    "name": "Lot 12",
+    "status": "available",
+    "bornDate": "Feb 2023",
+    "weightKg": null,
+    "color": "Brown",
+    "healthStatus": "Excellent",
+    "bloodline": "Premium",
+    "media": [
+      {
+        "type": "image",
+        "url": "/uploads/lot12.jpeg"
+      },
+      {
+        "type": "image",
+        "url": "/uploads/lot12full.jpeg"
+      },
+      {
+        "type": "video",
+        "url": "/uploads/lot12.mp4"
+      }
+    ],
+    "createdAt": "2025-09-16T05:29:21.082Z"
+  },
+  {
+    "id": "13",
+    "name": "Lot 13",
+    "status": "available",
+    "bornDate": "Mar 2023",
+    "weightKg": null,
+    "color": "Light Brown",
+    "healthStatus": "Excellent",
+    "bloodline": "Premium",
+    "media": [
+      {
+        "type": "image",
+        "url": "/uploads/lot13.jpeg"
+      },
+      {
+        "type": "image",
+        "url": "/uploads/lot13full.jpeg"
+      },
+      {
+        "type": "video",
+        "url": "/uploads/lot13.mp4"
+      }
+    ],
+    "createdAt": "2025-09-16T05:29:21.082Z"
+  },
+  {
+    "id": "14",
+    "name": "Lot 14",
+    "status": "available",
+    "bornDate": "Apr 2023",
+    "weightKg": null,
+    "color": "Dark Brown",
+    "healthStatus": "Excellent",
+    "bloodline": "Premium",
+    "media": [
+      {
+        "type": "image",
+        "url": "/uploads/lot14.jpeg"
+      },
+      {
+        "type": "image",
+        "url": "/uploads/lot14full.jpeg"
+      },
+      {
+        "type": "video",
+        "url": "/uploads/lot14.mp4"
+      }
+    ],
+    "createdAt": "2025-09-16T05:29:21.082Z"
+  },
+  {
+    "id": "15",
+    "name": "Lot 15",
+    "status": "available",
+    "bornDate": "May 2023",
+    "weightKg": null,
+    "color": "White",
+    "healthStatus": "Excellent",
+    "bloodline": "Premium",
+    "media": [
+      {
+        "type": "image",
+        "url": "/uploads/lot15.jpeg"
+      },
+      {
+        "type": "image",
+        "url": "/uploads/lot15full.jpeg"
+      },
+      {
+        "type": "video",
+        "url": "/uploads/lot15.mp4"
+      }
+    ],
+    "createdAt": "2025-09-16T05:29:21.082Z"
+  },
+  {
+    "id": "17",
+    "name": "Lot 17",
+    "status": "available",
+    "bornDate": "Jun 2023",
+    "weightKg": null,
+    "color": "Brown",
+    "healthStatus": "Excellent",
+    "bloodline": "Premium",
+    "media": [
+      {
+        "type": "image",
+        "url": "/uploads/lot17.jpeg"
+      },
+      {
+        "type": "image",
+        "url": "/uploads/lot17full.jpeg"
+      },
+      {
+        "type": "video",
+        "url": "/uploads/Lot%2017.mp4"
+      }
+    ],
+    "createdAt": "2025-09-16T05:29:21.082Z"
+  },
+  {
+    "id": "18",
+    "name": "Lot 18",
+    "status": "available",
+    "bornDate": "Jul 2023",
+    "weightKg": null,
+    "color": "Light Brown",
+    "healthStatus": "Excellent",
+    "bloodline": "Premium",
+    "media": [
+      {
+        "type": "image",
+        "url": "/uploads/lot18.jpeg"
+      },
+      {
+        "type": "image",
+        "url": "/uploads/lot18full.jpeg"
+      },
+      {
+        "type": "video",
+        "url": "/uploads/lot18.mp4"
+      }
+    ],
+    "createdAt": "2025-09-16T05:29:21.082Z"
+  },
+  {
+    "id": "19",
+    "name": "Lot 19",
+    "status": "available",
+    "bornDate": "Aug 2023",
+    "weightKg": null,
+    "color": "Dark Brown",
+    "healthStatus": "Excellent",
+    "bloodline": "Premium",
+    "media": [
+      {
+        "type": "image",
+        "url": "/uploads/lot19.jpeg"
+      },
+      {
+        "type": "image",
+        "url": "/uploads/lot19full.jpeg"
+      },
+      {
+        "type": "video",
+        "url": "/uploads/Lot%2019.mp4"
+      }
+    ],
+    "createdAt": "2025-09-16T05:29:21.082Z"
+  },
+  {
+    "id": "20",
+    "name": "Lot 20",
+    "status": "available",
+    "bornDate": "Sep 2023",
+    "weightKg": null,
+    "color": "White",
+    "healthStatus": "Excellent",
+    "bloodline": "Premium",
+    "media": [
+      {
+        "type": "image",
+        "url": "/uploads/lot20.jpeg"
+      },
+      {
+        "type": "image",
+        "url": "/uploads/lot20full.jpeg"
+      },
+      {
+        "type": "video",
+        "url": "/uploads/lot20.mp4"
+      }
+    ],
+    "createdAt": "2025-09-16T05:29:21.082Z"
+  },
+  {
+    "id": "21",
+    "name": "Lot 21",
+    "status": "available",
+    "bornDate": "Oct 2023",
+    "weightKg": null,
+    "color": "Brown",
+    "healthStatus": "Excellent",
+    "bloodline": "Premium",
+    "media": [
+      {
+        "type": "image",
+        "url": "/uploads/lot21.jpeg"
+      },
+      {
+        "type": "image",
+        "url": "/uploads/lot21full.jpeg"
+      },
+      {
+        "type": "video",
+        "url": "/uploads/Lot%2021.mp4"
+      }
+    ],
+    "createdAt": "2025-09-16T05:29:21.082Z"
+  },
+  {
+    "id": "22",
+    "name": "Lot 22",
+    "status": "available",
+    "bornDate": "Nov 2023",
+    "weightKg": null,
+    "color": "Light Brown",
+    "healthStatus": "Excellent",
+    "bloodline": "Premium",
+    "media": [
+      {
+        "type": "image",
+        "url": "/uploads/lot22.jpeg"
+      },
+      {
+        "type": "image",
+        "url": "/uploads/lot22full.jpeg"
+      },
+      {
+        "type": "video",
+        "url": "/uploads/lot22.mp4"
+      }
+    ],
+    "createdAt": "2025-09-16T05:29:21.082Z"
+  },
+  {
+    "id": "23",
+    "name": "Lot 23",
+    "status": "available",
+    "bornDate": "Dec 2023",
+    "weightKg": null,
+    "color": "Dark Brown",
+    "healthStatus": "Excellent",
+    "bloodline": "Premium",
+    "media": [
+      {
+        "type": "image",
+        "url": "/uploads/lot23.jpeg"
+      },
+      {
+        "type": "image",
+        "url": "/uploads/lot23full.jpeg"
+      },
+      {
+        "type": "video",
+        "url": "/uploads/Lot%2023.mp4"
+      }
+    ],
+    "createdAt": "2025-09-16T05:29:21.082Z"
+  },
+  {
+    "id": "24",
+    "name": "Lot 24",
+    "status": "available",
+    "bornDate": "Jan 2024",
+    "weightKg": null,
+    "color": "White",
+    "healthStatus": "Excellent",
+    "bloodline": "Premium",
+    "media": [
+      {
+        "type": "image",
+        "url": "/uploads/lot24.jpeg"
+      },
+      {
+        "type": "image",
+        "url": "/uploads/lot24full.jpeg"
+      },
+      {
+        "type": "video",
+        "url": "/uploads/Lot%2024.mp4"
+      }
+    ],
+    "createdAt": "2025-09-16T05:29:21.082Z"
+  },
+  {
+    "id": "26",
+    "name": "Lot 26",
+    "status": "available",
+    "bornDate": "Feb 2024",
+    "weightKg": null,
+    "color": "Brown",
+    "healthStatus": "Excellent",
+    "bloodline": "Premium",
+    "media": [
+      {
+        "type": "image",
+        "url": "/uploads/lot26.jpeg"
+      },
+      {
+        "type": "image",
+        "url": "/uploads/lot26full.jpeg"
+      },
+      {
+        "type": "video",
+        "url": "/uploads/Lot%2026.mp4"
+      }
+    ],
+    "createdAt": "2025-09-16T05:29:21.082Z"
+  },
+  {
+    "id": "28",
+    "name": "Lot 28",
+    "status": "available",
+    "bornDate": "Mar 2024",
+    "weightKg": null,
+    "color": "Light Brown",
+    "healthStatus": "Excellent",
+    "bloodline": "Premium",
+    "media": [
+      {
+        "type": "image",
+        "url": "/uploads/lot28.jpeg"
+      },
+      {
+        "type": "video",
+        "url": "/uploads/Lot%2028.mp4"
+      }
+    ],
+    "createdAt": "2025-09-16T05:29:21.082Z"
+  },
+  {
+    "id": "29",
+    "name": "Lot 29",
+    "status": "available",
+    "bornDate": "Apr 2024",
+    "weightKg": null,
+    "color": "Dark Brown",
+    "healthStatus": "Excellent",
+    "bloodline": "Premium",
+    "media": [
+      {
+        "type": "image",
+        "url": "/uploads/lot29.jpeg"
+      },
+      {
+        "type": "image",
+        "url": "/uploads/lot29full.jpeg"
+      },
+      {
+        "type": "video",
+        "url": "/uploads/Lot%2029.mp4"
+      }
+    ],
+    "createdAt": "2025-09-16T05:29:21.082Z"
+  },
+  {
+    "id": "30",
+    "name": "Lot 30",
+    "status": "available",
+    "bornDate": "May 2024",
+    "weightKg": null,
+    "color": "White",
+    "healthStatus": "Excellent",
+    "bloodline": "Premium",
+    "media": [
+      {
+        "type": "image",
+        "url": "/uploads/lot30.jpeg"
+      },
+      {
+        "type": "image",
+        "url": "/uploads/lot30full.jpeg"
+      },
+      {
+        "type": "video",
+        "url": "/uploads/Lot%2030.mp4"
+      }
+    ],
+    "createdAt": "2025-09-16T05:29:21.082Z"
+  },
+  {
+    "id": "31",
+    "name": "Lot 31",
+    "status": "available",
+    "bornDate": "Jun 2024",
+    "weightKg": null,
+    "color": "Brown",
+    "healthStatus": "Excellent",
+    "bloodline": "Premium",
+    "media": [
+      {
+        "type": "image",
+        "url": "/uploads/lot31.jpeg"
+      },
+      {
+        "type": "image",
+        "url": "/uploads/lot31full.jpeg"
+      },
+      {
+        "type": "video",
+        "url": "/uploads/Lot%2031.mp4"
+      }
+    ],
+    "createdAt": "2025-09-16T05:29:21.082Z"
+  },
+  {
+    "id": "33",
+    "name": "Lot 33",
+    "status": "available",
+    "bornDate": "Jul 2024",
+    "weightKg": null,
+    "color": "Light Brown",
+    "healthStatus": "Excellent",
+    "bloodline": "Premium",
+    "media": [
+      {
+        "type": "image",
+        "url": "/uploads/lot33full.jpeg"
+      },
+      {
+        "type": "video",
+        "url": "/uploads/Lot%2033.mp4"
+      }
+    ],
+    "createdAt": "2025-09-16T05:29:21.082Z"
+  },
+  {
+    "id": "34",
+    "name": "Lot 34",
+    "status": "available",
+    "bornDate": "Aug 2024",
+    "weightKg": null,
+    "color": "Dark Brown",
+    "healthStatus": "Excellent",
+    "bloodline": "Premium",
+    "media": [
+      {
+        "type": "image",
+        "url": "/uploads/lot34.jpeg"
+      },
+      {
+        "type": "image",
+        "url": "/uploads/lot34full.jpeg"
+      },
+      {
+        "type": "video",
+        "url": "/uploads/Lot%2034.mp4"
+      }
+    ],
+    "createdAt": "2025-09-16T05:29:21.082Z"
+  },
+  {
+    "id": "35",
+    "name": "Lot 35",
+    "status": "available",
+    "bornDate": "Sep 2024",
+    "weightKg": null,
+    "color": "White",
+    "healthStatus": "Excellent",
+    "bloodline": "Premium",
+    "media": [
+      {
+        "type": "image",
+        "url": "/uploads/lot35.jpeg"
+      },
+      {
+        "type": "image",
+        "url": "/uploads/lot35full.jpeg"
+      },
+      {
+        "type": "video",
+        "url": "/uploads/lot35.mp4"
+      }
+    ],
+    "createdAt": "2025-09-16T05:29:21.082Z"
+  },
+  {
+    "id": "38",
+    "name": "Lot 38",
+    "status": "available",
+    "bornDate": "Oct 2024",
+    "weightKg": null,
+    "color": "Brown",
+    "healthStatus": "Excellent",
+    "bloodline": "Premium",
+    "media": [
+      {
+        "type": "image",
+        "url": "/uploads/lot38.jpeg"
+      },
+      {
+        "type": "image",
+        "url": "/uploads/lot38full.jpeg"
+      },
+      {
+        "type": "video",
+        "url": "/uploads/Lot%2038.mp4"
+      }
+    ],
+    "createdAt": "2025-09-16T05:29:21.082Z"
+  },
+  {
+    "id": "40",
+    "name": "Lot 40",
+    "status": "available",
+    "bornDate": "Nov 2024",
+    "weightKg": null,
+    "color": "Light Brown",
+    "healthStatus": "Excellent",
+    "bloodline": "Premium",
+    "media": [
+      {
+        "type": "image",
+        "url": "/uploads/lot40.jpeg"
+      },
+      {
+        "type": "image",
+        "url": "/uploads/lot40full.jpeg"
+      },
+      {
+        "type": "video",
+        "url": "/uploads/Lot%2040.mp4"
+      }
+    ],
+    "createdAt": "2025-09-16T05:29:21.082Z"
+  },
+  {
+    "id": "41",
+    "name": "Lot 41",
+    "status": "available",
+    "bornDate": "Dec 2024",
+    "weightKg": null,
+    "color": "Dark Brown",
+    "healthStatus": "Excellent",
+    "bloodline": "Premium",
+    "media": [
+      {
+        "type": "image",
+        "url": "/uploads/lot41.jpeg"
+      },
+      {
+        "type": "image",
+        "url": "/uploads/lot41full.jpeg"
+      },
+      {
+        "type": "video",
+        "url": "/uploads/lot41.mp4"
+      }
+    ],
+    "createdAt": "2025-09-16T05:29:21.082Z"
+  },
+  {
+    "id": "43",
+    "name": "Lot 43",
+    "status": "available",
+    "bornDate": "Jan 2025",
+    "weightKg": null,
+    "color": "White",
+    "healthStatus": "Excellent",
+    "bloodline": "Premium",
+    "media": [
+      {
+        "type": "image",
+        "url": "/uploads/lot43.jpeg"
+      },
+      {
+        "type": "image",
+        "url": "/uploads/lot43full.jpeg"
+      },
+      {
+        "type": "video",
+        "url": "/uploads/Lot%2043.mp4"
+      }
+    ],
+    "createdAt": "2025-09-16T05:29:21.082Z"
+  },
+  {
+    "id": "47",
+    "name": "Lot 47",
+    "status": "available",
+    "bornDate": "Feb 2025",
+    "weightKg": null,
+    "color": "Brown",
+    "healthStatus": "Excellent",
+    "bloodline": "Premium",
+    "media": [
+      {
+        "type": "image",
+        "url": "/uploads/lot47.jpeg"
+      },
+      {
+        "type": "image",
+        "url": "/uploads/lot47full.jpeg"
+      },
+      {
+        "type": "video",
+        "url": "/uploads/lot47.mp4"
+      }
+    ],
+    "createdAt": "2025-09-16T05:29:21.082Z"
+  },
+  {
+    "id": "48",
+    "name": "Lot 48",
+    "status": "available",
+    "bornDate": "Mar 2025",
+    "weightKg": null,
+    "color": "Light Brown",
+    "healthStatus": "Excellent",
+    "bloodline": "Premium",
+    "media": [
+      {
+        "type": "image",
+        "url": "/uploads/lot48.jpeg"
+      },
+      {
+        "type": "image",
+        "url": "/uploads/lot48full.jpeg"
+      },
+      {
+        "type": "video",
+        "url": "/uploads/Lot%2048.mp4"
+      }
+    ],
+    "createdAt": "2025-09-16T05:29:21.082Z"
+  }
+]

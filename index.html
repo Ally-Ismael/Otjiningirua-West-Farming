@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Otjiningirua West Farming - Premium Rams & Quality Beans</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #2c5530;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+        }
+
+        .nav-links a:hover {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        main {
+            margin-top: 80px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .hero {
+            background: linear-gradient(rgba(44, 85, 48, 0.8), rgba(44, 85, 48, 0.8)), 
+                        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><rect fill="%234a7c59" width="1200" height="600"/><circle fill="%235d8a6a" cx="200" cy="150" r="80" opacity="0.3"/><circle fill="%236b9477" cx="800" cy="300" r="120" opacity="0.2"/><circle fill="%23799e84" cx="1000" cy="100" r="60" opacity="0.4"/></svg>');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            text-align: center;
+            padding: 4rem 0;
+            position: relative;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            animation: fadeInUp 1s ease;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            animation: fadeInUp 1s ease 0.2s both;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 1rem 2rem;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(238, 90, 36, 0.4);
+            animation: fadeInUp 1s ease 0.4s both;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(238, 90, 36, 0.6);
+        }
+
+        .products-section {
+            padding: 4rem 0;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            color: #2c5530;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border-radius: 2px;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border: 3px solid transparent;
+            background-clip: padding-box;
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+            border-color: #667eea;
+        }
+
+        .product-card h3 {
+            font-size: 1.8rem;
+            color: #2c5530;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .product-card p {
+            color: #666;
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .video-placeholder {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .video-placeholder::before {
+            content: '▶';
+            font-size: 3rem;
+            position: absolute;
+            opacity: 0.8;
+            transition: all 0.3s ease;
+        }
+
+        .video-placeholder:hover::before {
+            transform: scale(1.2);
+        }
+
+        .video-placeholder:hover {
+            transform: scale(1.02);
+        }
+
+        .contact-form {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-top: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            color: #2c5530;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .submit-btn {
+            background: linear-gradient(45deg, #2c5530, #4a7c59);
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(44, 85, 48, 0.3);
+        }
+
+        .contact-info {
+            background: linear-gradient(135deg, #2c5530, #4a7c59);
+            color: white;
+            padding: 3rem 0;
+            text-align: center;
+        }
+
+        .contact-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .contact-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .contact-icon {
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        footer {
+            background: #1a1a1a;
+            color: white;
+            text-align: center;
+            padding: 2rem 0;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero p {
+                font-size: 1.1rem;
+            }
+
+            .products-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 2rem;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 600px;
+            position: relative;
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .close:hover {
+            color: #667eea;
+            transform: scale(1.1);
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .success-message {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: white;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-top: 1rem;
+            display: none;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="container">
+            <div class="logo">🐑 Otjiningirua West Farming</div>
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/rams.html">Rams</a></li>
+                <li><a href="/beans.html">Beans</a></li>
+                <li><a href="/contact.html">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section id="home" class="hero">
+            <h1>Premium Quality Rams & Fresh Beans</h1>
+            <p>Your trusted source for quality livestock and agricultural products in Namibia</p>
+            <a href="#contact" class="cta-button">Get In Touch Today</a>
+        </section>
+
+        <section id="products" class="products-section">
+            <h2 class="section-title">Our Premium Products</h2>
+            
+            <div class="products-grid">
+                <div class="product-card" id="rams">
+                    <h3>🐏 PREMIUM DAMARA RAMS FOR SALE</h3>
+                    <p>Rooted in tradition! Breeder of Stud Damara sheep.<br>Situated in Otjinene, Namibia</p>
+
+                    <p><strong>🌟 WHY CHOOSE OUR RAMS?</strong></p>
+                    <ul style="margin-left: 1rem; color: #666;">
+                        <li>✔ Robust Genetics: Bred for resilience and adaptability</li>
+                        <li>✔ Proven Health: Vaccinated and raised in optimal conditions</li>
+                        <li>✔ Versatile: Ideal for meat production, wool, or breeding programs</li>
+                    </ul>
+                    
+                    <div style="display:flex; gap:10px; margin-top:1rem;">
+                        <a href="/rams.html" class="cta-button" style="flex:1; text-align:center;">View Ram Lots</a>
+                        <button class="cta-button" onclick="openContactModal('rams')" style="flex:1;">Inquire</button>
+                    </div>
+                </div>
+
+                <div class="product-card" id="beans">
+                    <h3>🌱 Fresh Quality Beans <span style="font-size:0.9rem; color:#ee5a24;">(Coming soon)</span></h3>
+                    <p>Locally grown, premium quality beans harvested at peak freshness. Perfect for both domestic use and commercial applications.</p>
+                    
+                    <div class="video-placeholder" onclick="openVideoModal('beans-video')">
+                        Click to View Bean Farm Videos
+                    </div>
+                    
+                    <p><strong>Features:</strong></p>
+                    <ul style="margin-left: 1rem; color: #666;">
+                        <li>Organically grown</li>
+                        <li>Multiple varieties available</li>
+                        <li>Bulk and retail quantities</li>
+                        <li>Fresh harvest guarantee</li>
+                    </ul>
+                    
+                    <div style="display:flex; gap:10px; margin-top:1rem;">
+                        <a href="/beans.html" class="cta-button" style="flex:1; text-align:center;">View Beans</a>
+                        <button class="cta-button" onclick="openContactModal('beans')" style="flex:1;">Inquire</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="contact-form">
+            <h2 class="section-title">Contact Us</h2>
+            <form id="contactForm" action="#" method="post" novalidate>
+                <div class="form-group">
+                    <label for="product">Product Interest:</label>
+                    <select id="product" name="product" required>
+                        <option value="">Select a product</option>
+                        <option value="rams">Premium Rams</option>
+                        <option value="beans">Quality Beans</option>
+                        <option value="both">Both Rams and Beans</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="name">Full Name:</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email Address:</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="phone">Phone Number:</label>
+                    <input type="tel" id="phone" name="phone" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="quantity">Quantity Needed:</label>
+                    <input type="text" id="quantity" name="quantity" placeholder="e.g., 5 rams, 100kg beans">
+                </div>
+                
+                <div class="form-group">
+                    <label for="message">Message:</label>
+                    <textarea id="message" name="message" rows="5" placeholder="Please provide details about your requirements..."></textarea>
+                </div>
+                <!-- Honeypot field to deter bots -->
+                <div style="display:none;">
+                    <label for="website">Website</label>
+                    <input type="text" id="website" name="website" autocomplete="off" tabindex="-1">
+                </div>
+                
+                <button type="submit" class="submit-btn" id="contactSubmitBtn">Send Inquiry</button>
+                <div id="successMessage" class="success-message" role="status" aria-live="polite">Thank you! Your inquiry has been sent.</div>
+            </form>
+        </section>
+    </main>
+
+    <div class="contact-info">
+        <div class="container">
+            <h2>Get In Touch</h2>
+            <div class="contact-details">
+                <div class="contact-item">
+                    <div class="contact-icon">📞</div>
+                    <div>
+                        <h4>Phone</h4>
+                        <p>Ehrenfried: 081 122 0667</p>
+                        <p>Ingrid: 081 446 4081</p>
+                        <p>Undji: 081 661 4972</p>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">💬</div>
+                    <div>
+                        <h4>WhatsApp</h4>
+                        <p><a href="https://wa.me/264811220667" target="_blank" rel="noopener noreferrer" style="color: white; text-decoration: underline;">Chat with us on WhatsApp</a></p>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">📧</div>
+                    <div>
+                        <h4>Email</h4>
+                        <p>info@otjiningirua.com</p>
+                    </div>
+                </div>
+                <div class="contact-item">
+                    <div class="contact-icon">📍</div>
+                    <div>
+                        <h4>Location</h4>
+                        <p>Otjiningirua West, Namibia</p>
+                    </div>
+                </div>
+            </div>
+            <p style="margin-top:1rem;">&copy; 2025 Otjiningirua West Farming. All rights reserved.</p>
+        </div>
+    </div>
+
+    <!-- Modal for Contact -->
+    <div id="contactModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('contactModal')">&times;</span>
+            <h2>Quick Inquiry</h2>
+            <form id="quickContactForm" action="#" method="post" novalidate>
+                <input type="hidden" id="modalProduct" name="product">
+                
+                <div class="form-group">
+                    <label for="modalName">Full Name:</label>
+                    <input type="text" id="modalName" name="name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="modalPhone">Phone Number:</label>
+                    <input type="tel" id="modalPhone" name="phone" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="modalMessage">Message:</label>
+                    <textarea id="modalMessage" name="message" rows="3" required></textarea>
+                </div>
+                <!-- Honeypot field to deter bots in modal form -->
+                <div style="display:none;">
+                    <label for="modalWebsite">Website</label>
+                    <input type="text" id="modalWebsite" name="website" autocomplete="off" tabindex="-1">
+                </div>
+                
+                <button type="submit" class="submit-btn" id="quickSubmitBtn">Send Quick Inquiry</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal for Videos -->
+    <div id="videoModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('videoModal')">&times;</span>
+            <h2 id="videoTitle">Product Videos</h2>
+            <div id="videoContent">
+                <p>Video content will be displayed here. You can upload and embed your actual videos in this section.</p>
+                <p><strong>Instructions for video upload:</strong></p>
+                <ul>
+                    <li>Videos can be uploaded to platforms like YouTube or Vimeo</li>
+                    <li>Embed codes can be inserted here</li>
+                    <li>Local video files can be stored on your server</li>
+                    <li>Multiple videos can be displayed in a gallery format</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        // Contact form submit → backend
+        (function(){
+            const form = document.getElementById('contactForm');
+            if (form) {
+                form.addEventListener('submit', async function(e){
+                    e.preventDefault();
+                    const fd = new FormData(form);
+                    const data = Object.fromEntries(fd.entries());
+                    // Honeypot check
+                    if (data.website) { return; }
+                    const btn = document.getElementById('contactSubmitBtn');
+                    try {
+                        if (btn) { btn.disabled = true; btn.setAttribute('aria-busy','true'); btn.textContent = 'Sending...'; }
+                        const res = await fetch('/api/inquiries', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                product: data.product || null,
+                                name: data.name || null,
+                                email: data.email || null,
+                                phone: data.phone || null,
+                                quantity: data.quantity || null,
+                                message: data.message || null
+                            })
+                        });
+                        if (!res.ok) throw new Error('Failed to send');
+                        const msg = document.getElementById('successMessage');
+                        if (msg) { msg.style.display = 'block'; setTimeout(()=> msg.style.display='none', 4000); }
+                        form.reset();
+                    } catch (err) {
+                        alert('Sorry, failed to send your inquiry. Please try again.');
+                    } finally {
+                        if (btn) { btn.disabled = false; btn.removeAttribute('aria-busy'); btn.textContent = 'Send Inquiry'; }
+                    }
+                });
+            }
+            const quick = document.getElementById('quickContactForm');
+            if (quick) {
+                quick.addEventListener('submit', async function(e){
+                    e.preventDefault();
+                    const fd = new FormData(quick);
+                    const data = Object.fromEntries(fd.entries());
+                    // Honeypot check
+                    if (data.website) { return; }
+                    const btn = document.getElementById('quickSubmitBtn');
+                    try {
+                        if (btn) { btn.disabled = true; btn.setAttribute('aria-busy','true'); btn.textContent = 'Sending...'; }
+                        const res = await fetch('/api/inquiries', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                product: data.product || null,
+                                name: data.name || null,
+                                email: null,
+                                phone: data.phone || null,
+                                quantity: null,
+                                message: data.message || null
+                            })
+                        });
+                        if (!res.ok) throw new Error('Failed');
+                        closeModal('contactModal');
+                        alert('Thank you! Your inquiry has been sent.');
+                        quick.reset();
+                    } catch (err) {
+                        alert('Sorry, failed to send your inquiry. Please try again.');
+                    } finally {
+                        if (btn) { btn.disabled = false; btn.removeAttribute('aria-busy'); btn.textContent = 'Send Quick Inquiry'; }
+                    }
+                });
+            }
+        })();
+
+        // Modal functions
+        function openContactModal(product) {
+            document.getElementById('modalProduct').value = product;
+            document.getElementById('modalMessage').placeholder = `I'm interested in your ${product}. Please provide more information.`;
+            document.getElementById('contactModal').style.display = 'block';
+        }
+
+        async function openVideoModal(videoType) {
+            const modal = document.getElementById('videoModal');
+            const title = document.getElementById('videoTitle');
+            const content = document.getElementById('videoContent');
+            try {
+                const [rams, beans] = await Promise.all([
+                    fetch('/api/rams').then(r => r.json()),
+                    fetch('/api/beans').then(r => r.json())
+                ]);
+                if (videoType === 'rams-video') {
+                    title.textContent = 'Ram Videos';
+                    const videos = (rams.flatMap(r => (r.media||[]).filter(m => m.type === 'video')));
+                    content.innerHTML = videos.length ? videos.map(v => `<video src="${v.url}" controls style="width:100%; border-radius:10px; margin: 0.5rem 0;"></video>`).join('') : '<p>No videos yet.</p>';
+                } else if (videoType === 'beans-video') {
+                    title.textContent = 'Bean Farm Videos';
+                    const videos = (beans.flatMap(b => (b.media||[]).filter(m => m.type === 'video')));
+                    content.innerHTML = videos.length ? videos.map(v => `<video src="${v.url}" controls style=\"width:100%; border-radius:10px; margin: 0.5rem 0;\"></video>`).join('') : '<p>No videos yet.</p>';
+                }
+            } catch (e) {
+                content.innerHTML = '<p>Failed to load videos.</p>';
+            }
+            
+            modal.style.display = 'block';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Close modal when clicking outside
+        window.addEventListener('click', function(event) {
+            const contactModal = document.getElementById('contactModal');
+            const videoModal = document.getElementById('videoModal');
+            
+            if (event.target === contactModal) {
+                contactModal.style.display = 'none';
+            }
+            if (event.target === videoModal) {
+                videoModal.style.display = 'none';
+            }
+        });
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Header scroll effect
+        window.addEventListener('scroll', function() {
+            const header = document.querySelector('header');
+            if (window.scrollY > 100) {
+                header.style.background = 'rgba(255, 255, 255, 0.98)';
+            } else {
+                header.style.background = 'rgba(255, 255, 255, 0.95)';
+            }
+        });
+    </script>
+    
+</body>
+</html>
